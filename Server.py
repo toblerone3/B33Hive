@@ -1,12 +1,9 @@
 import socket
-import base64
 from threading import Thread
-from cryptography.fernet import Fernet
-from time import sleep
 
 # server's IP address
 SERVER_HOST = '127.0.0.1'#input("Enter Your Current IPV4 Address: ") #### CHANGE THIS BEFORE SUBMISSIONS
-PIN_ASK = input("Do you want to protect your server with a PIN? [Y/N]: ")
+
 SERVER_PORT = 5003   # port we want to use
 separator_token = "<SEP>"  # we will use this to separate the client name & message
 
@@ -22,7 +19,7 @@ s.bind((SERVER_HOST, SERVER_PORT))
 s.listen(5)
 print(f"[*] Listening as {SERVER_HOST}:{SERVER_PORT}")
 
-def listen_for_client(cs):
+def listen_for_client(cs): ##This is message handling code left over from the chat client, I have kept it as it may be able to be repurposed
     """
     This function keep listening for a message from cs socket
     Whenever a message is received, broadcast it to all other connected clients
