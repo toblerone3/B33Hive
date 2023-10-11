@@ -1,12 +1,3 @@
-# this is a file in order to demonstrate basic control over docker desktop, all on the same machine.
-# in this file, I should demo:
-# downloading docker container images
-# starting containers
-# stopping containers
-# viewing running containers
-# deleting containers
-
-
 import sys
 
 import docker
