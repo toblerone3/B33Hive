@@ -1,60 +1,78 @@
-#this is a file in order to demonstrate basic control over docker desktop, all on the same machine.
-#in this file, I should demo:
-#downloading docker container images
-#starting containers - not done
-#stoping containers - not done
-#viewing running containers - not done
-#deleteing containers - not done
+# this is a file in order to demonstrate basic control over docker desktop, all on the same machine.
+# in this file, I should demo:
+# downloading docker container images
+# starting containers
+# stopping containers
+# viewing running containers
+# deleting containers
 
 
-import sys, docker
+import sys
+
+import docker
+
 client = docker.from_env()
 
-def menu():
-    print("1) Download test image \n2) start container\n3) stop container\n4) view running containers\n5) remove test container\n6) exit")
-    choice = int(input("enter a number: "))
-    #if (choice):
-        #print("\ninvalid choice\n")
-        #menu()
 
-    if(choice == 1):
+def menu():
+    print(
+        "1) Download test image \n2) start container\n3) stop container\n4) view running containers\n5) remove test container\n6) exit")
+    choice = int(input("enter a number: "))
+    # if (choice):
+    # print("\ninvalid choice\n")
+    # menu()
+
+    if (choice == 1):
         download()
-    elif(choice == 2):
+    elif (choice == 2):
         start()
-    elif(choice == 3):
+    elif (choice == 3):
         stop()
     elif (choice == 4):
         view()
     elif (choice == 5):
         remove()
-    elif(choice == 6):
+    elif (choice == 6):
         sys.exit()
     else:
         print("\ninvalid choice\n")
         menu()
 
+
 def download():
-    client.images.pull('debian:latest')
-    print("latest debian container has been pulled")
+    client.images.pull(
+        'debian:latest')  # Pull an image of the given name and return it. Similar to the docker pull command. If tag is None or empty, it is set to latest. If all_tags is set, the tag parameter is ignored and all image tags will be pulled.
+    print("latest debian container has been pulled, check for duplicates")
     input("\nPress Enter to continue...")
     menu()
+
+
 def start():
     global test_container
-    test_container = client.containers.run('debian', 'tail -f /dev/null', detach=True)  # args separated by commas, i.e. domainname=alpine, auto_remove=true. args available here: https://docker-py.readthedocs.io/en/stable/index.html
+    test_container = client.containers.run('debian', 'tail -f /dev/null',
+                                           detach=True)  # args separated by commas, i.e. domainname=alpine, auto_remove=true. args available here: https://docker-py.readthedocs.io/en/stable/index.html
     test_container.logs()  # shows logs from running container. If the detach argument is True, it will start the container and immediately return a Container object, similar to "docker run -d".
     input("\nPress Enter to continue...")
     menu()
+
+
 def stop():
-    test_container.stop()
+    test_container.stop()  # Stops a container. Similar to the docker stop command.
     input("\nPress Enter to continue...")
     menu()
+
+
 def view():
-    print(client.containers.list(all=True))
+    print(client.containers.list(
+        all=True))  # List containers. Similar to the docker ps command. all (bool) – Show all containers. Only running containers are shown by default
     input("\nPress Enter to continue...")
     menu()
+
+
 def remove():
-    test_container.remove()
+    test_container.remove()  # Remove this container. Similar to the docker rm command.
     print("\ncontainer removed\n")
     menu()
+
 
 menu()
