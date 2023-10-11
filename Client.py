@@ -28,7 +28,7 @@ label.image = photo
 
 label.grid(row=6, column=8, sticky=W, pady=4)
 
-
+##These are descriptors for the entry boxes
 Label(win, bg='black', fg='white', text='Server IP').grid(row=10, column= 7)
 Label(win, bg='black', fg='white', text='Port').grid(row=11, column=7)
 
