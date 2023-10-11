@@ -19,42 +19,22 @@ s.bind((SERVER_HOST, SERVER_PORT))
 s.listen(5)
 print(f"[*] Listening as {SERVER_HOST}:{SERVER_PORT}")
 
-def listen_for_client(cs): ##This is message handling code left over from the chat client, I have kept it as it may be able to be repurposed
-    """
-    This function keep listening for a message from cs socket
-    Whenever a message is received, broadcast it to all other connected clients
-    """
-    while True:
-        try:
-            # keep listening for a message from cs socket
-            msg = cs.recv(1024)
-        except Exception as e:
-            # client no longer connected
-            # remove it from the set
-            print(f"[!] Error: {e}")
-            client_sockets.remove(cs)
-        # else:
-        #     # if we received a message, replace the <SEP>
-        #     # token with ": " for nice printing
-        #     msg = msg.replace(separator_token, ": ")
-        # iterate over all connected sockets
-        for client_socket in client_sockets:
-            # and send the message
-            client_socket.send(msg)
+#
 
 
 while True:
     # we keep listening for new connections all the time
     client_socket, client_address = s.accept()
-    print(f"[+] {client_address} connected.")
+    #print(f"[+] {client_address} connected.") ##we have no fucking idea why this prints an additional number (eg: 51xxx)
+    #print(client_socket)
     # add the new connected client to connected sockets
     client_sockets.add(client_socket)
     # start a new thread that listens for each client's messages
-    t = Thread(target=listen_for_client, args=(client_socket,))
+    #t = Thread(target=listen_for_client, args=(client_socket,))
     # make the thread daemon, so it ends whenever the main thread ends
-    t.daemon = True
+    #t.daemon = True
     # start the thread
-    t.start()
+    #t.start()
 
 
 
