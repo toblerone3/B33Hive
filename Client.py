@@ -42,8 +42,7 @@ port.grid(row=11, column=8)
 Button(win, bg='Orange2', text='Connect', command=show_data).grid(row=13, column=9, pady=0)
 Button(win, bg='Orange2', text='Exit', command=win.quit).grid(row=13, column=7, pady=0)
 
-
-mainloop()
+mainloop() ### End of First Tkinter Window
 
 # server's IP address
 # if the server is not on this machine,
