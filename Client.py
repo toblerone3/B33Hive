@@ -1,6 +1,7 @@
 import socket
+import tkinter
 from tkinter import *
-
+from PIL import ImageTk, Image
 
 def show_data():
     global serverIP
@@ -15,21 +16,32 @@ def show_data():
 
 win = Tk()
 win.title("B33Hive: Connect to a Server")
-win.geometry("640x480")
+#win.geometry("640x480")
 win.resizable(True, True)
-win.configure(bg='black')
+win.configure(bg='#010204')
+#Loads an Image
+Logo = Image.open("B33Hive.png")
+photo = ImageTk.PhotoImage(Logo)
+#Puts image into a label
+label = tkinter.Label(image=photo, highlightthickness=0, background='#000000')
+label.image = photo
 
-Label(win, bg='black', fg='white', text='Server IP').grid(row=0)
-Label(win, bg='black', fg='white', text='Port').grid(row=1)
+label.grid(row=6, column=8, sticky=W, pady=4)
+
+
+Label(win, bg='black', fg='white', text='Server IP').grid(row=10, column= 7)
+Label(win, bg='black', fg='white', text='Port').grid(row=11, column=7)
+
 
 servIP = Entry(win, width=16)
 port = Entry(win, width=6)
 
-servIP.grid(row=0, column=1)
-port.grid(row=1, column=1)
+servIP.grid(row=10, column=8)
+port.grid(row=11, column=8)
 
-Button(win, bg='yellow', text='Exit', command=win.quit).grid(row=3, column=0, sticky=W, pady=4)
-Button(win, bg='yellow', text='Connect', command=show_data).grid(row=3, column=1, sticky=W, pady=4)
+Button(win, bg='Orange2', text='Connect', command=show_data).grid(row=13, column=9, pady=0)
+Button(win, bg='Orange2', text='Exit', command=win.quit).grid(row=13, column=7, pady=0)
+
 
 mainloop()
 
