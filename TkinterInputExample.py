@@ -2,7 +2,10 @@ from tkinter import *
 
 
 def show_data():
+    firstname = fname.get()
     print( 'My First and Last Name are %s %s' % (fname.get(), lname.get()) )
+    print(firstname)
+    print(lname)
 
 
 win = Tk()
