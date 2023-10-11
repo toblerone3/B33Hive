@@ -24,7 +24,7 @@ print(f"[*] Listening as {SERVER_HOST}:{SERVER_PORT}")
 while True:
     # we keep listening for new connections all the time
     client_socket, client_address = s.accept()
-    # print(f"[+] {client_address} connected.") ##we have no fucking idea why this prints an additional number (eg: 51xxx)
+    print(f"[+] {client_address} connected.") ##we have no fucking idea why this prints an additional number (eg: 51xxx)
     # print(client_socket)
     # add the new connected client to connected sockets
     client_sockets.add(client_socket)
