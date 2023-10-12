@@ -3,6 +3,7 @@ import sys, docker.api, random, string, subprocess
 #to do
 #pull and configure images
 #pull and configure dependencies
+#automate creating dockertrap image
 #create new containers
 #remove containers
 #Starting containers
@@ -17,15 +18,19 @@ client = docker.from_env()
 
 try:
     open("flag", "x")
-    client.images.pull('mysql')  # dependency for kippo
-    # client.images.pull('alexeiled/nsenter') #old dependency, may still need
-    client.images.pull('dariusbakunas/kippo')
-    client.images.pull('dtagdevsec/glutton')
-    client.images.pull('ktitan/glastopf')
+    client.images.pull('dariusbakunas/kippo') #medium interaction SSH honeypot
+    client.images.pull('mysql')  #dependency for kippo - data storage
+    client.images.pull('dariusbakunas/kippo-graph') #dependency for kippo - analysing kippo data
+    client.images.pull('dtagdevsec/glutton') #Generic Low Interaction Honeypot
+    client.images.pull('dtagdevsec/snare') #web application honeypot
+    client.images.pull('dtagdevsec/tanner') #remote data analysis and classification service for snare
+    print("the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+
     #dockertrap image made separately - https://github.com/mrhavens/DockerTrap/tree/master
 
 except:
     print("\nimages already pulled, proceeding\n")
+    print("the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
 
 def randomword(length):
         letters = string.ascii_lowercase
@@ -64,16 +69,47 @@ def menu():
         menu()
 
 def create():
+    kipponame ="kippo-" + randomword(8)
+
     print(
-        "\n1) create glastopf  \n2) create glutton \n3) create kippo  \n4) create mysql \n5) create dockertrap \n6) exit ")
+        "\n1) create kippo \n2) create mySQL  \n3) create kippo-graphs \n4) create glutton \n)5 create snare \n6) create tanner \n7) create dockertrap \n8) exit ")
+    print("the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
     try:
         choice = int(input("enter a number: "))
     except:
         input("\ninvalid selection, press enter to continue...\n")
 
     if (choice == 1):
-        createname = "glastopf-" + randomword(8)
-        client.containers.create(image="ktitan/glastopf", name=createname, ports={'80/tcp': 80}, volumes={'/data/glastopf': {'bind': '/opt/myhoneypot', 'mode': 'rw'})
+        print("\nthis honeypot requires 2 dependencies, mySQL for logging and the kippo-graphs container for analysing.")
+
+        try:
+            createsql = input("create mySQL now?: (yes/no)")
+        except:
+            input("\ninvalid input, press enter to continue...")
+
+        if (createsql=="yes"):
+            print("the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+            sqlname = "sql-" + kipponame
+            client.containers.create(name=sqlname, environment=["MYSQL_ROOT_PASSWORD=K[5UZ4ELSf;e)gX="])
+
+        try:
+            creategraph = input("create kippo-graphs now? mySQL will need to be started in order to do so: (yes/no)")
+        except:
+            input("\ninvalid input, press enter to continue...")
+
+        if (creategraph == "yes"):
+            print("the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+            client.containers.start(name=sqlname, detach=False, tty=False)
+            client.containers.create(name="kippo-graphs" + kipponame, links={sqlname: 'mysql'}, image="dariusbakunas/kippo-graph")
+        elif (creategraph == "no"):
+            print("\nskipping kippo-graphs...\n")
+        else:
+            print("invalid input, please try again")
+
+        print("\nkippo and chosen dependencies finished, returning to menu")
+        input("\npress enter to continue...")
+        create()
+
     elif (choice == 2):
         client.containers.create()
     elif (choice == 3):
