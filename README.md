@@ -1,10 +1,9 @@
 # B33Hive
 ___
 ![Screenshot](B33Hive.png)
-___
 
 A dynamic Honeypot c2 server and client, using docker and python 3.10.
-
+---
 Note: Do not use a venv interpreter in Pycharm, Pillow will break very hard, use a local interpreter
 (IE: Your local installation of Python 3.10)
 
@@ -16,6 +15,6 @@ https://www.jetbrains.com/help/pycharm/github.html
 
 Client testing can and should be done in Windows, Server Side should be tested on Linux
 Suitable Distros for Linux testing include:
-Fedora, (X/K)Ubuntu, Debian etc...
+[Fedora](https://fedoraproject.org/), ([X](https://xubuntu.org/)/[K](https://kubuntu.org/))[Ubuntu](https://ubuntu.com/), [Debian](https://www.debian.org/) etc...
 
 
