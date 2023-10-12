@@ -33,8 +33,8 @@ Label(win, bg='black', fg='white', text='Server IP').grid(row=10, column= 7)
 Label(win, bg='black', fg='white', text='Port').grid(row=11, column=7)
 
 #These are our entry boxes
-servIP = Entry(win, width=16)
-port = Entry(win, width=6)
+servIP = Entry(win, width=16, bg="gray25", fg='Orange2')
+port = Entry(win, width=6, bg="gray25", fg='Orange2')
 
 servIP.grid(row=10, column=8)
 port.grid(row=11, column=8)
