@@ -22,6 +22,7 @@ win.configure(bg='#010204')
 #Loads an Image
 Logo = Image.open("B33Hive.png")
 photo = ImageTk.PhotoImage(Logo)
+win.wm_iconphoto(False, photo) #this sets our icon
 #Puts image into a label
 label = tkinter.Label(image=photo, highlightthickness=0, background='#010204')
 label.image = photo
