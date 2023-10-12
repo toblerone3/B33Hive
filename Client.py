@@ -23,7 +23,7 @@ win.configure(bg='#010204')
 Logo = Image.open("B33Hive.png")
 photo = ImageTk.PhotoImage(Logo)
 #Puts image into a label
-label = tkinter.Label(image=photo, highlightthickness=0, background='#000000')
+label = tkinter.Label(image=photo, highlightthickness=0, background='#010204')
 label.image = photo
 
 label.grid(row=6, column=8, sticky=W, pady=4)
@@ -39,8 +39,8 @@ port = Entry(win, width=6, bg="gray25", fg='Orange2')
 servIP.grid(row=10, column=8)
 port.grid(row=11, column=8)
 
-Button(win, bg='Orange2', text='Connect', command=show_data).grid(row=13, column=9, pady=0)
-Button(win, bg='Orange2', text='Exit', command=win.quit).grid(row=13, column=7, pady=0)
+Button(win, bg='#ca891d', text='Connect', command=show_data).grid(row=13, column=9, pady=0)
+Button(win, bg='#ca891d', text='Exit', command=win.quit).grid(row=13, column=7, pady=0)
 
 mainloop() ### End of First Tkinter Window
 
