@@ -4,6 +4,12 @@ from tkinter import *
 from PIL import ImageTk, Image
 
 
+def test_signal(): ## THIS IS HOW WE SEND TO THE SERVER, THIS CAN BE REPEATED AD-NAUSEAM
+    signal_Send = "Test Signal"
+    sigSent = signal_Send.encode()
+    s.send(sigSent)
+
+
 def show_data():
     global serverIP
     global rawPort
@@ -15,7 +21,7 @@ def show_data():
     win.destroy()
 
 
-def debugMain():
+def debugMain(): ##This is how we skip to the main menu for debug, does not connect to the server
     win.destroy()
     mainMenu()
 
@@ -45,7 +51,7 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
     Button(win2, bg='#ca891d', activebackground='gray25', text='button5', ).grid(row=6, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button6', ).grid(row=7, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button7', ).grid(row=8, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button8', ).grid(row=9, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='button8', command=test_signal).grid(row=9, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='Exit', command=win2.quit).grid(row=10, column=1, pady=0)
     # Right Row
     Button(win2, bg='#ca891d', activebackground='gray25', text='button1', ).grid(row=1, column=3, pady=0)
@@ -115,5 +121,6 @@ s.connect((SERVER_HOST, SERVER_PORT))  # From this point on, we're talking to th
 print("[+] Connected.")
 
 mainMenu()
+
 # close the socket
 s.close()

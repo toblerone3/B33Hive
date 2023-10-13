@@ -1,5 +1,5 @@
 import socket
-
+from threading import Thread
 # server's IP address
 SERVER_HOST = '127.0.0.1'  # input("Enter Your Current IPV4 Address: ") #### CHANGE THIS BEFORE SUBMISSIONS
 
@@ -20,6 +20,24 @@ print(f"[*] Listening as {SERVER_HOST}:{SERVER_PORT}")
 
 #
 
+def listen_for_client(cs):
+    """
+    This function keep listening for a message from cs socket
+    Whenever a message is received, broadcast it to all other connected clients
+    """
+    while True:
+        try:
+            # keep listening for a message from cs socket
+            msg = cs.recv(1024).decode()
+            print(msg)
+            quit() ##PLACE HOLDER, WE WILL WANT TO MAP MESSAGES TO COMMANDS FROM HERE
+        except Exception as e:
+            # client no longer connected
+            # remove it from the set
+            print(f"[!] Error: {e}")
+            client_sockets.remove(cs)
+
+
 
 while True:
     # we keep listening for new connections all the time
@@ -29,11 +47,11 @@ while True:
     # add the new connected client to connected sockets
     client_sockets.add(client_socket)
     # start a new thread that listens for each client's messages
-    # t = Thread(target=listen_for_client, args=(client_socket,))
+    t = Thread(target=listen_for_client, args=(client_socket,))
     # make the thread daemon, so it ends whenever the main thread ends
-    # t.daemon = True
+    t.daemon = True
     # start the thread
-    # t.start()
+    t.start()
 
 # close client sockets
 for cs in client_sockets:
