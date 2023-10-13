@@ -1,6 +1,7 @@
 # B33Hive
 ___
-![Screenshot](B33Hive.png)
+
+![Screenshot](B33HiveCover.png)
 
 A dynamic Honeypot c2 server and client, using docker and python 3.10.
 ---
