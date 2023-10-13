@@ -85,14 +85,18 @@ Logo = Image.open("B33Hive.png")
 photo = ImageTk.PhotoImage(Logo)
 win.wm_iconphoto(False, photo)  # this sets our icon
 # Puts image into a label
-label = tkinter.Label(image=photo, highlightthickness=0, background='#010204')
-label.image = photo
+conLogo = tkinter.Label(image=photo, highlightthickness=0, background='#010204')
+conLogo.image = photo
 
-label.grid(row=6, column=8, sticky=W, pady=4)
+conLogo.grid(row=5, column=8, sticky=W, pady=4)
 
+
+Label(win, bg='black', fg='white', text='A Dynamic Honeypot C2 Server and Client').grid(row=7, column=8)
+Label(win, bg='black', fg='white', text='').grid(row=8, column=8) ##Blank Labels are Spacers because Tkinter.grid is bad
 # These are descriptors for the entry boxes
 Label(win, bg='black', fg='white', text='Server IP').grid(row=10, column=7)
 Label(win, bg='black', fg='white', text='Port').grid(row=11, column=7)
+
 
 # These are our entry boxes
 servIP = Entry(win, width=16, bg="gray25", fg='#ca891d')

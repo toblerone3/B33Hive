@@ -1,5 +1,7 @@
 import socket
 from threading import Thread
+import docker
+
 # server's IP address
 SERVER_HOST = '127.0.0.1'  # input("Enter Your Current IPV4 Address: ") #### CHANGE THIS BEFORE SUBMISSIONS
 
