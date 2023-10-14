@@ -1,5 +1,7 @@
 import socket
 from threading import Thread
+import docker
+
 # server's IP address
 SERVER_HOST = '192.168.10.20'  # input("Enter Your Current IPV4 Address: ") #### CHANGE THIS BEFORE SUBMISSIONS
 
@@ -30,7 +32,12 @@ def listen_for_client(cs):
             # keep listening for a message from cs socket
             msg = cs.recv(1024).decode()
             print(msg)
-            quit() ##PLACE HOLDER, WE WILL WANT TO MAP MESSAGES TO COMMANDS FROM HERE
+            if msg == "Button 8":
+                print("Button 8 Okay")
+            if msg == "Button 7":
+                print("Button 7 Okay")
+            msg = ""
+            #quit() ##PLACE HOLDER, WE WILL WANT TO MAP MESSAGES TO COMMANDS FROM HERE
         except Exception as e:
             # client no longer connected
             # remove it from the set

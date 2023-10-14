@@ -3,9 +3,12 @@ import tkinter
 from tkinter import *
 from PIL import ImageTk, Image
 
-
-def test_signal(): ## THIS IS HOW WE SEND TO THE SERVER, THIS CAN BE REPEATED AD-NAUSEAM
-    signal_Send = "Test Signal"
+def button7(): ## THIS IS HOW WE SEND TO THE SERVER, THIS CAN BE REPEATED AD-NAUSEAM
+    signal_Send = "Button 7"
+    sigSent = signal_Send.encode()
+    s.send(sigSent)
+def button8(): ## Further Example
+    signal_Send = "Button 8"
     sigSent = signal_Send.encode()
     s.send(sigSent)
 
@@ -50,18 +53,18 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
     Button(win2, bg='#ca891d', activebackground='gray25', text='button4', ).grid(row=4, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button5', ).grid(row=6, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button6', ).grid(row=7, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button7', ).grid(row=8, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button8', command=test_signal).grid(row=9, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='button7', command=button7).grid(row=8, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='button8', command=button8).grid(row=9, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='Exit', command=win2.quit).grid(row=10, column=1, pady=0)
     # Right Row
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button1', ).grid(row=1, column=3, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button2', ).grid(row=2, column=3, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button3', ).grid(row=3, column=3, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button4', ).grid(row=4, column=3, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button5', ).grid(row=6, column=3, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button6', ).grid(row=7, column=3, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button7', ).grid(row=8, column=3, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button8', ).grid(row=9, column=3, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='button9', ).grid(row=1, column=3, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='button10', ).grid(row=2, column=3, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='button11', ).grid(row=3, column=3, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='button12', ).grid(row=4, column=3, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='button13', ).grid(row=6, column=3, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='button14', ).grid(row=7, column=3, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='button15', ).grid(row=8, column=3, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='button16', ).grid(row=9, column=3, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='Exit', command=win2.quit).grid(row=10, column=3, pady=0)
 
     entryBox = Entry(win2, width=32, bg="gray25", fg='#ca891d')
@@ -82,14 +85,18 @@ Logo = Image.open("B33Hive.png")
 photo = ImageTk.PhotoImage(Logo)
 win.wm_iconphoto(False, photo)  # this sets our icon
 # Puts image into a label
-label = tkinter.Label(image=photo, highlightthickness=0, background='#010204')
-label.image = photo
+conLogo = tkinter.Label(image=photo, highlightthickness=0, background='#010204')
+conLogo.image = photo
 
-label.grid(row=6, column=8, sticky=W, pady=4)
+conLogo.grid(row=5, column=8, sticky=W, pady=4)
 
+
+Label(win, bg='black', fg='white', text='A Dynamic Honeypot C2 Server and Client').grid(row=7, column=8)
+Label(win, bg='black', fg='white', text='').grid(row=8, column=8) ##Blank Labels are Spacers because Tkinter.grid is bad
 # These are descriptors for the entry boxes
 Label(win, bg='black', fg='white', text='Server IP').grid(row=10, column=7)
 Label(win, bg='black', fg='white', text='Port').grid(row=11, column=7)
+
 
 # These are our entry boxes
 servIP = Entry(win, width=16, bg="gray25", fg='#ca891d')
