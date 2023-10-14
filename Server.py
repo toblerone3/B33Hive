@@ -1,7 +1,7 @@
 import socket
 from threading import Thread
 # server's IP address
-SERVER_HOST = '127.0.0.1'  # input("Enter Your Current IPV4 Address: ") #### CHANGE THIS BEFORE SUBMISSIONS
+SERVER_HOST = '192.168.10.20'  # input("Enter Your Current IPV4 Address: ") #### CHANGE THIS BEFORE SUBMISSIONS
 
 SERVER_PORT = 5003  # port we want to use
 separator_token = "<SEP>"  # we will use this to separate the client name & message
