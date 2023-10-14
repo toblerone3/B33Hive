@@ -1,7 +1,7 @@
 import random
 import string
 import sys
-
+import docker
 import docker.api
 
 # to do
@@ -44,7 +44,7 @@ def randomword(length):
 
 def menu():
     print(
-        "\n1) create container \n2) destroy container \n3) start container \n4) stop container\n5) fetch logs\n6) fetch uptime\n6) fetch resource usage\n7) edit config\n8) exit")
+        "\n1) create container \n2) destroy container \n3) start container \n4) stop container\n5) fetch logs\n6) fetch resource usage\n7) edit config\n8) exit")
     try:
         choice = int(input("enter a number: "))
     except:
@@ -61,12 +61,10 @@ def menu():
     elif (choice == 5):
         logs()
     elif (choice == 6):
-        uptime()
-    elif (choice == 7):
         resource()
-    elif (choice == 8):
+    elif (choice == 7):
         config()
-    elif (choice == 9):
+    elif (choice == 8):
         sys.exit()
     elif (choice == 69):
         exec(open("bee.py").read())
@@ -78,7 +76,7 @@ def menu():
 def create(Container):
     kipponame = "kippo-" + randomword(8)
 
-    print( #done            #done               #done
+    print(
         "\n1) create kippo \n2) create mySQL  \n3) create kippo-graphs \n4) create glutton \n)5 create snare \n6) create tanner \n7) create dockertrap \n8) exit ")
     print("the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
     try:
@@ -174,7 +172,24 @@ def create(Container):
     # client.containers.create()
 
 
-def destroy():
+def destroy(container):
+    print()
+    client.containers.list()
+    print()
+    destroyname = ''
+
+    try:
+        destroyname = input("input the name of the container to stop")
+    except:
+        print("invalid selection")
+
+    container.image(name=destroyname)
+    client.containers.stop(name=destroyname)
+
+
+
+    print()
+    input("\nfinished, press enter...\n")
     menu()
 
 
@@ -207,22 +222,47 @@ def stop(container):
     except:
         print("invalid selection")
 
-    client.containers.run(name=stopname)
+    client.containers.stop(name=stopname)
     print()
     print("container status: " + container.name.status)
     input("\nfinished, press enter...\n")
     menu()
 
 
-def logs():
+def logs(container):
+    print()
+    client.containers.list()
+    print()
+    logname = ''
+
+    try:
+        logname = input("input the name of the container to retrieve logs from")
+    except:
+        print("invalid selection")
+
+    client.containers.logs(logname, stdout=True, stderr=True, stream=True, timestamps=False, tail='all', since=None, follow=None,
+         until=None)
+    print()
+    print("container status: " + container.name.status)
+    input("\nfinished, press enter...\n")
     menu()
 
 
-def uptime():
-    menu()
+def resource(container):
+    print()
+    client.containers.list()
+    print()
+    resourcename = ''
 
+    try:
+        resourcename = input("input the name of the container to retrieve resource usage from")
+    except:
+        print("invalid selection")
 
-def resource():
+    client.containers.top(name=resourcename)
+    print()
+    print("container status: " + container.name.status)
+    input("\nfinished, press enter...\n")
     menu()
 
 
