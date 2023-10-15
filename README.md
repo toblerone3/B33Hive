@@ -1,4 +1,5 @@
 # B33Hive
+
 ___
 
 ![Screenshot](B33HiveCover.png)
@@ -14,6 +15,7 @@ https://www.jetbrains.com/help/pycharm/github.html
 
 Client testing can and should be done in Windows, Server Side should be tested on Linux
 Suitable Distros for Linux testing include:
-[Fedora](https://fedoraproject.org/), ([X](https://xubuntu.org/)/[K](https://kubuntu.org/))[Ubuntu](https://ubuntu.com/), [Debian](https://www.debian.org/) etc...
+[Fedora](https://fedoraproject.org/), ([X](https://xubuntu.org/)/[K](https://kubuntu.org/))[Ubuntu](https://ubuntu.com/), [Debian](https://www.debian.org/)
+etc...
 
 

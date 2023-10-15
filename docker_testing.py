@@ -1,4 +1,5 @@
 import sys
+
 import docker
 
 client = docker.from_env()
@@ -38,7 +39,6 @@ def download():
 
 
 def start():
-
     test_container = client.containers.run('debian', 'tail -f /dev/null',
                                            detach=True)  # args separated by commas, i.e. domainname=alpine, auto_remove=true. args available here: https://docker-py.readthedocs.io/en/stable/index.html
     test_container.logs()  # shows logs from running container. If the detach argument is True, it will start the container and immediately return a Container object, similar to "docker run -d".

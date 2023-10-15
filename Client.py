@@ -1,13 +1,17 @@
 import socket
 import tkinter
 from tkinter import *
+
 from PIL import ImageTk, Image
 
-def button7(): ## THIS IS HOW WE SEND TO THE SERVER, THIS CAN BE REPEATED AD-NAUSEAM
+
+def button7():  ## THIS IS HOW WE SEND TO THE SERVER, THIS CAN BE REPEATED AD-NAUSEAM
     signal_Send = "Button 7"
     sigSent = signal_Send.encode()
     s.send(sigSent)
-def button8(): ## Further Example
+
+
+def button8():  ## Further Example
     signal_Send = "Button 8"
     sigSent = signal_Send.encode()
     s.send(sigSent)
@@ -24,7 +28,7 @@ def show_data():
     win.destroy()
 
 
-def debugMain(): ##This is how we skip to the main menu for debug, does not connect to the server
+def debugMain():  ##This is how we skip to the main menu for debug, does not connect to the server
     win.destroy()
     mainMenu()
 
@@ -90,13 +94,12 @@ conLogo.image = photo
 
 conLogo.grid(row=5, column=8, sticky=W, pady=4)
 
-
 Label(win, bg='black', fg='white', text='A Dynamic Honeypot C2 Server and Client').grid(row=7, column=8)
-Label(win, bg='black', fg='white', text='').grid(row=8, column=8) ##Blank Labels are Spacers because Tkinter.grid is bad
+Label(win, bg='black', fg='white', text='').grid(row=8,
+                                                 column=8)  ##Blank Labels are Spacers because Tkinter.grid is bad
 # These are descriptors for the entry boxes
 Label(win, bg='black', fg='white', text='Server IP').grid(row=10, column=7)
 Label(win, bg='black', fg='white', text='Port').grid(row=11, column=7)
-
 
 # These are our entry boxes
 servIP = Entry(win, width=16, bg="gray25", fg='#ca891d')

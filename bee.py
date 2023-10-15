@@ -1,12 +1,16 @@
 # finished June 18 2019
-import time
 import sys
+import time
+
+
 def lprint(s):
     for c in s:
         sys.stdout.write(c)
         sys.stdout.flush()
         time.sleep(0.03)
     print('')
+
+
 print("According to all known laws of aviation, there is no way a bee should be able to fly.")
 lprint("Its wings are too small to get its fat little body off the ground.")
 lprint("The bee, of course, flies anyway because bees don't care what humans think is impossible.")
@@ -34,7 +38,7 @@ lprint("stop flying in the house!")
 lprint("- Hey, Adam.")
 lprint("- Hey, Barry.")
 lprint("- Is that fuzz gel?")
-lprint("- A little. Special day, graduation.") 
+lprint("- A little. Special day, graduation.")
 lprint("Never thought I'd make it.")
 lprint("Three days grade school,")
 lprint("three days high school.")

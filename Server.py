@@ -1,6 +1,5 @@
 import socket
 from threading import Thread
-import docker
 
 # server's IP address
 SERVER_HOST = '192.168.10.20'  # input("Enter Your Current IPV4 Address: ") #### CHANGE THIS BEFORE SUBMISSIONS
@@ -20,6 +19,7 @@ s.bind((SERVER_HOST, SERVER_PORT))
 s.listen(5)
 print(f"[*] Listening as {SERVER_HOST}:{SERVER_PORT}")
 
+
 #
 
 def listen_for_client(cs):
@@ -37,7 +37,7 @@ def listen_for_client(cs):
             if msg == "Button 7":
                 print("Button 7 Okay")
             msg = ""
-            #quit() ##PLACE HOLDER, WE WILL WANT TO MAP MESSAGES TO COMMANDS FROM HERE
+            # quit() ##PLACE HOLDER, WE WILL WANT TO MAP MESSAGES TO COMMANDS FROM HERE
         except Exception as e:
             # client no longer connected
             # remove it from the set
@@ -45,11 +45,11 @@ def listen_for_client(cs):
             client_sockets.remove(cs)
 
 
-
 while True:
     # we keep listening for new connections all the time
     client_socket, client_address = s.accept()
-    print(f"[+] {client_address} connected.") ##we have no fucking idea why this prints an additional number (eg: 51xxx)
+    print(
+        f"[+] {client_address} connected.")  ##we have no fucking idea why this prints an additional number (eg: 51xxx)
     # print(client_socket)
     # add the new connected client to connected sockets
     client_sockets.add(client_socket)
