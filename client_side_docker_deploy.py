@@ -259,12 +259,12 @@ if imageflag.is_file():
 else:
     print("pulling images\n")
     #open("flag", "w")
-    client.images.pull('dariusbakunas/kippo')  # medium interaction SSH honeypot
-    print("kippo pulled...")
-    client.images.pull('mysql')  # dependency for kippo - data storage
-    print("mySQL pulled...")
-    client.images.pull('dariusbakunas/kippo-graph')  # dependency for kippo - analysing kippo data
-    print("kippo-graph pulled...")
+    #client.images.pull('dariusbakunas/kippo')  # medium interaction SSH honeypot
+    #print("kippo pulled...")
+    #client.images.pull('mysql')  # dependency for kippo - data storage
+    #print("mySQL pulled...")
+    #client.images.pull('dariusbakunas/kippo-graph')  # dependency for kippo - analysing kippo data
+    #print("kippo-graph pulled...")
     # client.images.pull('dtagdevsec/glutton')  # Generic Low Interaction Honeypot - potentially worth building ourselves
     # print("glutton pulled...")
     # client.images.pull('dtagdevsec/snare')  # web application honeypot
