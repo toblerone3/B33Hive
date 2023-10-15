@@ -2,6 +2,8 @@ import random
 import string
 import sys
 import docker
+from pathlib import Path
+import subprocess
 
 
 # to do
@@ -19,28 +21,6 @@ import docker
 
 
 client = docker.from_env()
-
-try:
-    open("flag", "w")
-    client.images.pull('dariusbakunas/kippo')  # medium interaction SSH honeypot
-    print("kippo pulled...")
-    client.images.pull('mysql')  # dependency for kippo - data storage
-    print("mySQL pulled...")
-    client.images.pull('dariusbakunas/kippo-graph')  # dependency for kippo - analysing kippo data
-    print("kippo-graph pulled...")
-    #client.images.pull('dtagdevsec/glutton')  # Generic Low Interaction Honeypot - potentially worth building ourselves
-    print("glutton pulled...")
-    client.images.pull('dtagdevsec/snare')  # web application honeypot
-    print("snare pulled...")
-    client.images.pull('dtagdevsec/tanner') # remote data analysis and classification service for snare
-    print("tanner pulled...\nonly dockertrap left to build\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
-
-    # dockertrap image made separately - https://github.com/mrhavens/DockerTrap/tree/master
-
-except:
-    print("\nimages already pulled, proceeding\n")
-    print("the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
-
 
 def randomword(length):
     letters = string.ascii_lowercase
@@ -82,7 +62,9 @@ def create(Container):
     kipponame = "kippo-" + randomword(8)
 
     print(
-        "\n1) create kippo \n2) create mySQL  \n3) create kippo-graphs \n4) create glutton \n)5 create snare \n6) create tanner \n7) create dockertrap \n8) exit ")
+        "\n1) create kippo \n2) create mySQL  \n3) create kippo-graphs \n4) create glutton \n)5 create snare \n"
+        "6) create tanner \n7) create Honey_ports \n8) exit ")
+
     print("the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
     try:
         choice = int(input("enter a number: "))
@@ -144,37 +126,42 @@ def create(Container):
         client.containers.create(name="kippo-graphs" + randomword(8), links={sqllink},
                                  image="dariusbakunas/kippo-graph")
     elif (choice == 4):
-        #this one has to be build using a dockerfile. must find a way to create the file in the right place
-        lineone=("FROM debian:latest")
-        linetwo=('LABEL authors="Toby, Ethan, Cal, Kris"')
-        linethree=("")
-        linefour=('ENTRYPOINT ["top", "-b"]')
-        linefive=('RUN useradd -m docker && echo "docker:docker" | chpasswd && adduser docker sudo')
-        linesix=("USER docker")
-        lineseven=("CMD /bin/bash")
-        lineeight=("RUN sudo apt-get upgrade -y")
-        linenine=("RUN sudo apt-get install gcc libpcap-dev iptables -y")
-        lineten=("RUN sed -i 's/[# ]*Port .*/Port 5001/g' /etc/ssh/sshd_config")
-        lineelleven=("RUN exit")
 
-        glutton = open("./glutton/dockerfile", "w")
-        glutton.writelines([lineone, linetwo, linethree, linefour, linefive, linesix, lineseven, lineeight, linenine,
-                            lineten, lineelleven])
-        glutton.close()
-
-        client.containers.build(path="./glutton/dockerfile")
         print(
             "the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+        client.containers.build(path="./glutton/dockerfile")
 
     elif (choice == 5):
-        client.containers.create()
+        print(
+            "the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+        client.containers.build(path="./snare/dockerfile")
     elif (choice == 6):
-        client.containers.create()
+        print(
+            "the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+        client.containers.build(path="./tanner/dockerfile")
     elif (choice == 7):
-        client.containers.create()
+        answer = ""
+        print(
+            "the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+        client.containers.build(path="./honey_ports/dockerfile")
+        print("this container requires a separate bash script in order to function.")
+        try:
+            answer=str(input("\nrun this now? [Y/N] : "))
+        except:
+            print("\ninvalid input...")
+
+        if (answer == "Y"):
+            print(subprocess.run(["docker_testing/honey_ports/honey_ports.sh"]))
+
+        elif (answer == "N"):
+            print("No longer running script, returning to menu")
+            create()
+
+        else:
+            print("invalid input...")
+
     elif (choice == 8):
         menu()
-    # client.containers.create()
 
 
 def destroy(container):
@@ -272,4 +259,31 @@ def resource(container):
 
 
 def config():
+    menu()
+
+imageflag = Path("./flag")
+if imageflag.is_file():
+    print("\nimages already pulled, proceeding\n")
+    print("the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+    menu()
+
+else:
+    print("pulling images\n")
+    open("flag", "w")
+    client.images.pull('dariusbakunas/kippo')  # medium interaction SSH honeypot
+    print("kippo pulled...")
+    client.images.pull('mysql')  # dependency for kippo - data storage
+    print("mySQL pulled...")
+    client.images.pull('dariusbakunas/kippo-graph')  # dependency for kippo - analysing kippo data
+    print("kippo-graph pulled...")
+    # client.images.pull('dtagdevsec/glutton')  # Generic Low Interaction Honeypot - potentially worth building ourselves
+    #print("glutton pulled...")
+    #client.images.pull('dtagdevsec/snare')  # web application honeypot
+    #print("snare pulled...")
+    #client.images.pull('dtagdevsec/tanner')  # remote data analysis and classification service for snare
+    print("tanner pulled...\nHoney_ports, glutton, snare and tanner built though dockerfiles"
+          "\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+
+    # dockertrap image made separately - https://github.com/mrhavens/DockerTrap/tree/master
+
     menu()
