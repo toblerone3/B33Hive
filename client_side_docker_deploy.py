@@ -258,7 +258,7 @@ if imageflag.is_file():
 
 else:
     print("pulling images\n")
-    open("flag", "w")
+    #open("flag", "w")
     client.images.pull('dariusbakunas/kippo')  # medium interaction SSH honeypot
     print("kippo pulled...")
     client.images.pull('mysql')  # dependency for kippo - data storage
@@ -271,14 +271,14 @@ else:
     # print("snare pulled...")
     # client.images.pull('dtagdevsec/tanner')  # remote data analysis and classification service for snare
 
-    client.images.build("docker_testing/glutton/Dockerfile", pull=True, forcerm=True)
-    print("\nglutton built...")
-    client.images.build("docker_testing/honey_ports/Dockerfile", pull=True, forcerm=True)
-    print("\nHoney_ports built...")
-    client.images.build("docker_testing/snare/Dockerfile", pull=True, forcerm=True)
-    print("\nsnare built...")
-    client.images.build("docker_testing/tanner/Dockerfile", pull=True, forcerm=True)
-    print("\ntanner built")
+    client.images.build(fileobj="./docker_testing/glutton/Dockerfile", custom_context=True, pull=True)
+    #print("\nglutton built...")
+    #client.images.build(path="./docker_testing/honey_ports/Dockerfile", pull=True)
+    #print("\nHoney_ports built...")
+    #client.images.build(path="./docker_testing/snare/Dockerfile", pull=True)
+    #print("\nsnare built...")
+    #client.images.build(path="./docker_testing/tanner/Dockerfile", pull=True)
+    #print("\ntanner built")
     print("\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
 
     # dockertrap image made separately - https://github.com/mrhavens/DockerTrap/tree/master
