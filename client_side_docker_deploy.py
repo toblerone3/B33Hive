@@ -29,7 +29,8 @@ def randomword(length):
 
 def menu():
     print(
-        "\n1) create container \n2) destroy container \n3) start container \n4) stop container\n5) fetch logs\n6) fetch resource usage\n7) edit config\n8) exit")
+        "\n1) create container \n2) destroy container \n3) start container \n4) stop container\n5) fetch logs"
+        "\n6) fetch resource usage\n8) exit")
     try:
         choice = int(input("enter a number: "))
     except:
@@ -48,8 +49,6 @@ def menu():
     elif (choice == 6):
         resource()
     elif (choice == 7):
-        config()
-    elif (choice == 8):
         sys.exit()
     elif (choice == 69):
         exec(open("bee.py").read())
@@ -255,10 +254,6 @@ def resource(container):
     print()
     print("container status: " + container.name.status)
     input("\nfinished, press enter...\n")
-    menu()
-
-
-def config():
     menu()
 
 imageflag = Path("./flag")
