@@ -8,23 +8,22 @@ SERVER_PORT = 5003  # port we want to use
 SERVER_PIN = '8888'
 Attempts = 0
 PIN_ASK = input("Do you want to protect your Server with a PIN? [Y/N]: ")
-separator_token = "<SEP>"  # we will use this to separate the client name & message
 
-while True:
-    if PIN_ASK == 'Y':
-        SERVER_PIN = input("Enter a Four Digit Pin for your server: ")
-        print("Your PIN:", SERVER_PIN, "is now set!")
-        break
-    if PIN_ASK == 'N':
-        print("Okay!")
-        SERVER_PIN = '8888'
-        break
-    if Attempts == 3:
-        print("Maximum Pin Attempts Reached, Closing Program")
-        exit()
-    elif PIN_ASK != 'Y' or 'N':
-        SERVER_PIN = input("Please Enter Only a Y or an N Character:")
-        Attempts += 1
+while PIN_ASK.lower() not in ('y', 'n'):
+    if Attempts >= 3:
+        print("No Attempts Left, Quitting.")
+        quit()
+    PIN_ASK = input("Please Enter Only a Y or an N Character: ")
+    Attempts += 1
+    print(Attempts, "/ 3 Attempts Left")
+
+
+if PIN_ASK.lower() == 'n':
+    print("PIN Not Set, Continuing...")
+    SERVER_PIN = '8888'
+if PIN_ASK.lower() == 'y':
+    SERVER_PIN = input("Enter a Four Digit Pin for your server: ")
+    print("Your PIN:", SERVER_PIN, "is now set!")
 
 
 # initialize list/set of all connected client's sockets

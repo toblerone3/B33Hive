@@ -151,8 +151,8 @@ while True:
     if SERVER_PIN != '8888':
         if SERVER_PIN != CLIENT_PIN:
             print(SERVER_PIN, CLIENT_PIN)
-            print("Incorrect PIN")
-            break
+            print("Incorrect PIN - Disconnecting")
+            break ##CURRENTY ONLY BREAKS INSTEAD OF DISCONNECTING, CAN HARD DISCONNECT WITH QUIT() BUT CLOSE THE SOCKET FIRST
         elif SERVER_PIN == CLIENT_PIN:
             print("Correct PIN")
             break
