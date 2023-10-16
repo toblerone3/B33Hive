@@ -1,40 +1,11 @@
 import random
 import string
+import subprocess
 import sys
-
-import docker.api
-
-# to do
-# pull and configure images
-# pull and configure dependencies
-# automate creating dockertrap image
-# create new containers
-# remove containers
-# Starting containers
-# Stopping Containers
-# Get Container Logs
-# Get Container Uptime (?)
-# Get Container Resource Usage (If possible, this would just be cool)
-# Container config maybe?
-
+from pathlib import Path
+import docker
 
 client = docker.from_env()
-
-try:
-    open("flag", "x")
-    client.images.pull('dariusbakunas/kippo')  # medium interaction SSH honeypot
-    client.images.pull('mysql')  # dependency for kippo - data storage
-    client.images.pull('dariusbakunas/kippo-graph')  # dependency for kippo - analysing kippo data
-    client.images.pull('dtagdevsec/glutton')  # Generic Low Interaction Honeypot
-    client.images.pull('dtagdevsec/snare')  # web application honeypot
-    client.images.pull('dtagdevsec/tanner')  # remote data analysis and classification service for snare
-    print("the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
-
-    # dockertrap image made separately - https://github.com/mrhavens/DockerTrap/tree/master
-
-except:
-    print("\nimages already pulled, proceeding\n")
-    print("the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
 
 
 def randomword(length):
@@ -44,7 +15,8 @@ def randomword(length):
 
 def menu():
     print(
-        "\n1) create container \n2) destroy container \n3) start container \n4) stop container\n5) fetch logs\n6) fetch uptime\n6) fetch resource usage\n7) edit config\n8) exit")
+        "\n1) create container \n2) destroy container \n3) start container \n4) stop container\n5) fetch logs"
+        "\n6) fetch resource usage\n8) exit")
     try:
         choice = int(input("enter a number: "))
     except:
@@ -61,12 +33,8 @@ def menu():
     elif (choice == 5):
         logs()
     elif (choice == 6):
-        uptime()
-    elif (choice == 7):
         resource()
-    elif (choice == 8):
-        config()
-    elif (choice == 9):
+    elif (choice == 7):
         sys.exit()
     elif (choice == 69):
         exec(open("bee.py").read())
@@ -79,7 +47,9 @@ def create(Container):
     kipponame = "kippo-" + randomword(8)
 
     print(
-        "\n1) create kippo \n2) create mySQL  \n3) create kippo-graphs \n4) create glutton \n)5 create snare \n6) create tanner \n7) create dockertrap \n8) exit ")
+        "\n1) create kippo \n2) create mySQL  \n3) create kippo-graphs \n4) create glutton \n)5 create snare \n"
+        "6) create tanner \n7) create Honey_ports \n8) exit ")
+
     print("the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
     try:
         choice = int(input("enter a number: "))
@@ -141,16 +111,68 @@ def create(Container):
         client.containers.create(name="kippo-graphs" + randomword(8), links={sqllink},
                                  image="dariusbakunas/kippo-graph")
     elif (choice == 4):
-        client.containers.create()
+
+        print(
+            "the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+        # client.containers.build(path="./glutton/dockerfile")
+        gluttonname = "glutton-" + randomword(8)
+        client.containers.create(image="glutton", name=gluttonname)
+
     elif (choice == 5):
-        client.containers.create()
+        print(
+            "the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+        # client.containers.build(path="./snare/dockerfile")
+        snarename = "snare-" + randomword(8)
+        client.containers.create(image="snare", name=snarename)
     elif (choice == 6):
+        print(
+            "the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+        # client.containers.build(path="./tanner/dockerfile")
+        tannername = "tanner-" + randomword(8)
+        client.containers.create(image="tanner", name=tannername)
+    elif (choice == 7):
+        answer = ""
+        print(
+            "the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+        # client.containers.build(path="./honey_ports/dockerfile")
+        honeyportsname = "honeyports-" + randomword(8)
+        client.containers.create(image="honey_ports", name=honeyportsname)
+        print("this container requires a separate bash script in order to function.")
+        try:
+            answer = str(input("\nrun this now? [Y/N] : "))
+        except:
+            print("\ninvalid input...")
+
+        if (answer == "Y" or "y"):
+            print(subprocess.run(["docker_testing/honey_ports/honey_ports.sh"]))
+
+        elif (answer == "N" or "n"):
+            print("No longer running script, returning to menu")
+            create()
+
+        else:
+            print("invalid input...")
+
+    elif (choice == 8):
         menu()
 
-    # client.containers.create()
 
+def destroy(container):
+    print()
+    client.containers.list()
+    print()
+    destroyname = ''
 
-def destroy():
+    try:
+        destroyname = input("input the name of the container to stop")
+    except:
+        print("invalid selection")
+
+    container.image(name=destroyname)
+    client.containers.stop(name=destroyname)
+
+    print()
+    input("\nfinished, press enter...\n")
     menu()
 
 
@@ -183,24 +205,82 @@ def stop(container):
     except:
         print("invalid selection")
 
-    client.containers.run(name=stopname)
+    client.containers.stop(name=stopname)
     print()
     print("container status: " + container.name.status)
     input("\nfinished, press enter...\n")
     menu()
 
 
-def logs():
+def logs(container):
+    print()
+    client.containers.list()
+    print()
+    logname = ''
+
+    try:
+        logname = input("input the name of the container to retrieve logs from")
+    except:
+        print("invalid selection")
+
+    client.containers.logs(logname, stdout=True, stderr=True, stream=True, timestamps=False, tail='all', since=None,
+                           follow=None,
+                           until=None)
+    print()
+    print("container status: " + container.name.status)
+    input("\nfinished, press enter...\n")
     menu()
 
 
-def uptime():
+def resource(container):
+    print()
+    client.containers.list()
+    print()
+    resourcename = ''
+
+    try:
+        resourcename = input("input the name of the container to retrieve resource usage from")
+    except:
+        print("invalid selection")
+
+    client.containers.top(name=resourcename)
+    print()
+    print("container status: " + container.name.status)
+    input("\nfinished, press enter...\n")
     menu()
 
 
-def resource():
+imageflag = Path("./flag")
+if imageflag.is_file():
+    print("\nimages already pulled, proceeding\n")
+    print("the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
     menu()
 
+else:
+    print("pulling images\n")
+    #open("flag", "w")
+    #client.images.pull('dariusbakunas/kippo')  # medium interaction SSH honeypot
+    #print("kippo pulled...")
+    #client.images.pull('mysql')  # dependency for kippo - data storage
+    #print("mySQL pulled...")
+    #client.images.pull('dariusbakunas/kippo-graph')  # dependency for kippo - analysing kippo data
+    #print("kippo-graph pulled...")
+    # client.images.pull('dtagdevsec/glutton')  # Generic Low Interaction Honeypot - potentially worth building ourselves
+    # print("glutton pulled...")
+    # client.images.pull('dtagdevsec/snare')  # web application honeypot
+    # print("snare pulled...")
+    # client.images.pull('dtagdevsec/tanner')  # remote data analysis and classification service for snare
 
-def config():
+    client.images.build(fileobj="./docker_testing/glutton/Dockerfile", custom_context=True, pull=True)
+    #print("\nglutton built...")
+    #client.images.build(path="./docker_testing/honey_ports/Dockerfile", pull=True)
+    #print("\nHoney_ports built...")
+    #client.images.build(path="./docker_testing/snare/Dockerfile", pull=True)
+    #print("\nsnare built...")
+    #client.images.build(path="./docker_testing/tanner/Dockerfile", pull=True)
+    #print("\ntanner built")
+    print("\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+
+    # dockertrap image made separately - https://github.com/mrhavens/DockerTrap/tree/master
+
     menu()
