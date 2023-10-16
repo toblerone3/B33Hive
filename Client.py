@@ -3,6 +3,10 @@ import tkinter
 from tkinter import *
 from PIL import ImageTk, Image
 
+Attempts = 0
+
+PIN = ''
+
 def button7(): ## THIS IS HOW WE SEND TO THE SERVER, THIS CAN BE REPEATED AD-NAUSEAM
     signal_Send = "Button 7"
     sigSent = signal_Send.encode()
@@ -16,8 +20,10 @@ def button8(): ## Further Example
 def show_data():
     global serverIP
     global rawPort
+    global CLIENT_PIN
     serverIP = servIP.get()
     rawPort = port.get()
+    CLIENT_PIN = entryPIN.get()
     print('Connecting to %s on port %s' % (servIP.get(), port.get()))
     print(serverIP)
     print(rawPort)
@@ -96,14 +102,17 @@ Label(win, bg='black', fg='white', text='').grid(row=8, column=8) ##Blank Labels
 # These are descriptors for the entry boxes
 Label(win, bg='black', fg='white', text='Server IP').grid(row=10, column=7)
 Label(win, bg='black', fg='white', text='Port').grid(row=11, column=7)
+Label(win, bg='black', fg='white', text='PIN (Optional)').grid(row=12, column=7)
 
 
 # These are our entry boxes
 servIP = Entry(win, width=16, bg="gray25", fg='#ca891d')
 port = Entry(win, width=6, bg="gray25", fg='#ca891d')
+entryPIN = Entry(win, width=6, bg="gray25", fg='#ca891d')
 
 servIP.grid(row=10, column=8)
 port.grid(row=11, column=8)
+entryPIN.grid(row=12, column=8)
 
 Button(win, bg='#ca891d', activebackground='gray25', text='Connect', command=show_data).grid(row=13, column=9, pady=0)
 Button(win, bg='#ca891d', activebackground='gray25', text='Exit', command=win.quit).grid(row=13, column=7, pady=0)
@@ -116,6 +125,8 @@ mainloop()  # End of First Tkinter Window
 # put the private (network) IP address (e.g 192.168.1.2)
 SERVER_HOST = serverIP  # ("Enter IP Address or for Local Chats: 127.0.0.1: ")
 SERVER_PORT = rawPort  # server's port
+
+
 separator_token = "<SEP>"  # we will use this to separate the client name & message
 
 # initialize TCP socket
@@ -126,6 +137,27 @@ SERVER_PORT = int(SERVER_PORT)
 # connect to the server
 s.connect((SERVER_HOST, SERVER_PORT))  # From this point on, we're talking to the server
 print("[+] Connected.")
+
+recvPIN = s.recv(4096)
+SERVER_PIN = recvPIN.decode('utf-8')
+
+
+# print("Variable: SERVER_PIN:", SERVER_PIN,"Variable recvPIN:", recvPIN) # (debug option for PINS)
+
+while True:
+    if SERVER_PIN == '8888': ##8888 is the default pin, if the server doesn't have a pin, it will be automatically set to 8888, so we're checking if we can skip
+        print("Server Has No Pin, Continuing...")
+        break
+    if SERVER_PIN != '8888':
+        if SERVER_PIN != CLIENT_PIN:
+            print(SERVER_PIN, CLIENT_PIN)
+            print("Incorrect PIN")
+            break
+        elif SERVER_PIN == CLIENT_PIN:
+            print("Correct PIN")
+            break
+
+
 
 mainMenu()
 

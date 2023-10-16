@@ -4,9 +4,28 @@ import docker
 
 # server's IP address
 SERVER_HOST = '127.0.0.1'  # input("Enter Your Current IPV4 Address: ") #### CHANGE THIS BEFORE SUBMISSIONS
-
 SERVER_PORT = 5003  # port we want to use
+SERVER_PIN = '8888'
+Attempts = 0
+PIN_ASK = input("Do you want to protect your Server with a PIN? [Y/N]: ")
 separator_token = "<SEP>"  # we will use this to separate the client name & message
+
+while True:
+    if PIN_ASK == 'Y':
+        SERVER_PIN = input("Enter a Four Digit Pin for your server: ")
+        print("Your PIN:", SERVER_PIN, "is now set!")
+        break
+    if PIN_ASK == 'N':
+        print("Okay!")
+        SERVER_PIN = '8888'
+        break
+    if Attempts == 3:
+        print("Maximum Pin Attempts Reached, Closing Program")
+        exit()
+    elif PIN_ASK != 'Y' or 'N':
+        SERVER_PIN = input("Please Enter Only a Y or an N Character:")
+        Attempts += 1
+
 
 # initialize list/set of all connected client's sockets
 client_sockets = set()
@@ -59,6 +78,8 @@ while True:
     t.daemon = True
     # start the thread
     t.start()
+    sentPIN = SERVER_PIN.encode()
+    client_socket.send(sentPIN)  # NSend the pin to the client - IMPORTANT, ENCRYPT THIS LATER
 
 # close client sockets
 for cs in client_sockets:
