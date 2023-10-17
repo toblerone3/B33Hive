@@ -68,6 +68,9 @@ def listen_for_client(cs):
                 print("Button 8 Okay")
             if msg == "Button 7":
                 print("Button 7 Okay")
+            if msg == "Disconnect":
+                print("Client Disconnecting")
+                break
             msg = ""
             #quit() ##PLACE HOLDER, WE WILL WANT TO MAP MESSAGES TO COMMANDS FROM HERE
         except Exception as e:
