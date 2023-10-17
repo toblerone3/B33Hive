@@ -16,7 +16,7 @@ def randomword(length):
 def menu():
     print(
         "\n1) create container \n2) destroy container \n3) start container \n4) stop container\n5) fetch logs"
-        "\n6) fetch resource usage\n8) exit")
+        "\n6) fetch resource usage\n7) exit")
     try:
         choice = int(input("enter a number: "))
     except:

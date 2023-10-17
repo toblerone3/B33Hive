@@ -2,12 +2,15 @@ import socket
 from threading import Thread
 import docker
 
+hostname = socket.gethostname()
+IPAddr = socket.gethostbyname(hostname)
 
 # server's IP address
-SERVER_HOST = '127.0.0.1'  # input("Enter Your Current IPV4 Address: ") #### CHANGE THIS BEFORE SUBMISSIONS
+SERVER_HOST = IPAddr  # input("Enter Your Current IPV4 Address: ") #### CHANGE THIS BEFORE SUBMISSIONS
 SERVER_PORT = 5003  # port we want to use
 SERVER_PIN = '8888'
 Attempts = 0
+print("selected current ip address: " + IPAddr)
 PIN_ASK = input("Do you want to protect your Server with a PIN? [Y/N]: ")
 
 while PIN_ASK.lower() not in ('y', 'n'):
