@@ -1,19 +1,18 @@
 import random
 import string
-import subprocess
 import sys
 from pathlib import Path
 import docker
 
-client = docker.from_env()
+client = docker.from_env() # detects the docker installation and assigns this to a variable
 
 
-def randomword(length):
+def randomword(length): # user for human readable names, for naming containers. better an id tag
     letters = string.ascii_lowercase
     return ''.join(random.choice(letters) for i in range(length))
 
 
-def menu():
+def menu(): #main menu. for more information, please reread
     print(
         "\n1) create container \n2) destroy container \n3) start container \n4) stop container\n5) fetch logs"
         "\n6) fetch resource usage\n7) exit")
@@ -37,7 +36,7 @@ def menu():
     elif (choice == 7):
         sys.exit()
     elif (choice == 69):
-        exec(open("bee.py").read())
+        exec(open("bee.py").read()) #lol
     else:
         print("\ninvalid choice\n")
         menu()
@@ -47,7 +46,7 @@ def create(Container):
     kipponame = "kippo-" + randomword(8)
 
     print(
-        "\n1) create kippo \n2) create mySQL  \n3) create kippo-graphs \n4) exit")
+        "\n1) create kippo \n2) create mySQL  \n3) create kippo-graphs \n4) exit") #mysql for data logging, kippo-graphs for viewing the data
 
     print("the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
     try:
@@ -60,33 +59,36 @@ def create(Container):
             "\nthis honeypot requires 2 dependencies, mySQL for logging and the kippo-graphs container for analysing.")
 
         try:
-            createsql = input("create mySQL now?: (yes/no)")
+            createsql = str(input("create mySQL now?: (yes/no)"))
         except:
             input("\ninvalid input, press enter to continue...")
-
-        if (createsql == "yes"):
-            print(
-                "the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
-            sqlname = "sql-" + kipponame
-            client.containers.create(name=sqlname, environment=["MYSQL_ROOT_PASSWORD=K[5UZ4ELSf;e)gX="])
 
         try:
             creategraph = input("create kippo-graphs now? mySQL will need to be started in order to do so: (yes/no)")
         except:
             input("\ninvalid input, press enter to continue...")
 
-        if (creategraph == "yes"):
+        if (createsql == "yes" and creategraph == "no"):
             print(
                 "the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
-            client.containers.start(name=sqlname, detach=False, tty=False)
-            client.containers.create(name="kippo-graphs" + kipponame, links={sqlname: 'mysql'},
-                                     image="dariusbakunas/kippo-graph")
-            Container.stop(name=sqlname)
+            sqlname = "sql-" + kipponame
+            client.containers.create(name=sqlname, environment=["MYSQL_ROOT_PASSWORD=K[5UZ4ELSf;e)gX="])
 
-        elif (creategraph == "no"):
-            print("\nskipping kippo-graphs...\n")
+        elif (createsql == "no" and creategraph == "yes"):
+            print(
+                "the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+            client.containers.create(name="kippo-graphs-" + kipponame, image="dariusbakunas/kippo-graph")
+            print("warning: current config might be broken")
+
+        elif (creategraph =="yes" and createsql == "yes"):
+            print(
+                "the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+            sqlname = "sql-" + kipponame
+            client.containers.start(name=sqlname, detach=False, tty=False)
+            client.containers.create(name="kippo-graphs-" + kipponame, links={sqlname: 'mysql'},
+                                     image="dariusbakunas/kippo-graph")
         else:
-            print("invalid input, please try again")
+            print("invalid input")
 
         print("\nkippo and chosen dependencies finished, returning to menu")
         input("\npress enter to continue...")
@@ -125,7 +127,7 @@ def destroy(container):
         print("invalid selection")
 
     container.image(name=destroyname)
-    client.containers.stop(name=destroyname)
+    client.containers.stop(name=destroyname, force=True)
 
     print()
     input("\nfinished, press enter...\n")

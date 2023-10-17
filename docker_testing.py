@@ -2,7 +2,7 @@ import sys
 
 import docker
 
-client = docker.from_env()
+client = docker.from_env() # detects the docker installation and assigns this to a variable
 
 
 def menu():
@@ -47,7 +47,7 @@ def start():
 
 
 def stop():
-    test_container.stop()  # Stops a container. Similar to the docker stop command.
+    client.containers.stop(name='debian')
     input("\nPress Enter to continue...")
     menu()
 
@@ -60,8 +60,8 @@ def view():
 
 
 def remove():
-    test_container.remove()  # Remove this container. Similar to the docker rm command.
-    print("\ncontainer removed\n")
+    client.containers.stop(name='debian', force=True)  # Remove this container. Similar to the docker rm command. forces the deletion
+    input("\nPress Enter to continue...")
     menu()
 
 
