@@ -17,6 +17,15 @@ def button8(): ## Further Example
     s.send(sigSent)
 
 
+def disconnect():
+    print("Disconnecting...")
+    signal_Send = "Disconnect"
+    sigSent = signal_Send.encode()
+    s.send(sigSent)
+    s.close()
+    quit()
+
+
 def show_data():
     global serverIP
     global rawPort
@@ -61,7 +70,7 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
     Button(win2, bg='#ca891d', activebackground='gray25', text='button6', ).grid(row=7, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button7', command=button7).grid(row=8, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button8', command=button8).grid(row=9, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Exit', command=win2.quit).grid(row=10, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Exit', command=disconnect).grid(row=10, column=1, pady=0)
     # Right Row
     Button(win2, bg='#ca891d', activebackground='gray25', text='button9', ).grid(row=1, column=3, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button10', ).grid(row=2, column=3, pady=0)
@@ -71,7 +80,7 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
     Button(win2, bg='#ca891d', activebackground='gray25', text='button14', ).grid(row=7, column=3, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button15', ).grid(row=8, column=3, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button16', ).grid(row=9, column=3, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Exit', command=win2.quit).grid(row=10, column=3, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Disconnect', command=disconnect).grid(row=10, column=3, pady=0) ##Both Buttons currently call disconnect due to the fact we can't recall our login screen
 
     entryBox = Entry(win2, width=32, bg="gray25", fg='#ca891d')
     entryBox.grid(row=9, column=2)

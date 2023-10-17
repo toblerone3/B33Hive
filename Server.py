@@ -2,6 +2,7 @@ import socket
 from threading import Thread
 import docker
 
+
 # server's IP address
 SERVER_HOST = '127.0.0.1'  # input("Enter Your Current IPV4 Address: ") #### CHANGE THIS BEFORE SUBMISSIONS
 SERVER_PORT = 5003  # port we want to use
@@ -23,7 +24,20 @@ if PIN_ASK.lower() == 'n':
     SERVER_PIN = '8888'
 if PIN_ASK.lower() == 'y':
     SERVER_PIN = input("Enter a Four Digit Pin for your server: ")
-    print("Your PIN:", SERVER_PIN, "is now set!")
+
+Attempts = 0
+
+while True:
+    if Attempts >= 3:
+        print("No Attempts Left, Quitting.")
+        quit()
+    if len(SERVER_PIN) == 4 and SERVER_PIN.isdigit() is True:
+        print("Your PIN:", SERVER_PIN, "is now set!")
+        break
+    if len(SERVER_PIN) != 4 or SERVER_PIN.isdigit() is False:
+        Attempts += 1
+        print(Attempts, "/ 3 Attempts Left")
+        SERVER_PIN = input("Please enter a FOUR Digit Pin: ")
 
 
 # initialize list/set of all connected client's sockets
@@ -54,6 +68,9 @@ def listen_for_client(cs):
                 print("Button 8 Okay")
             if msg == "Button 7":
                 print("Button 7 Okay")
+            if msg == "Disconnect":
+                print("Client Disconnecting")
+                break
             msg = ""
             #quit() ##PLACE HOLDER, WE WILL WANT TO MAP MESSAGES TO COMMANDS FROM HERE
         except Exception as e:
