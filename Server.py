@@ -1,6 +1,13 @@
 import socket
 from threading import Thread
 import docker
+import random
+import string
+import sys
+from pathlib import Path
+
+
+client = docker.from_env() # detects the docker installation and assigns this to a variable
 
 hostname = socket.gethostname()
 IPAddr = socket.gethostbyname(hostname)
@@ -29,6 +36,27 @@ if PIN_ASK.lower() == 'y':
     SERVER_PIN = input("Enter a Four Digit Pin for your server: ")
 
 Attempts = 0
+
+def checkimage():
+    imageflag = Path("./flag")
+    if imageflag.is_file():
+        print("\nimages already pulled, proceeding\n")
+        print("the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+        #menu()
+
+    else:
+        print("pulling images\n")
+        open("flag", "w")
+        client.images.pull('dariusbakunas/kippo')  # medium interaction SSH honeypot
+        print("kippo pulled...")
+        client.images.pull('mysql')  # dependency for kippo - data storage
+        print("mySQL pulled...")
+        client.images.pull('dariusbakunas/kippo-graph')  # dependency for kippo - analysing kippo data
+        print("kippo-graph pulled...")
+
+        print("\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+
+        #menu()
 
 while True:
     if Attempts >= 3:
@@ -67,8 +95,9 @@ def listen_for_client(cs):
             # keep listening for a message from cs socket
             msg = cs.recv(1024).decode()
             print(msg)
-            if msg == "Button 8":
-                print("Button 8 Okay")
+            if msg == "Button 1":
+                print("Button 1 Okay")
+                checkimage()
             if msg == "Button 7":
                 print("Button 7 Okay")
             if msg == "Disconnect":

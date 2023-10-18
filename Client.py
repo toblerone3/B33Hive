@@ -11,8 +11,8 @@ def button7(): ## THIS IS HOW WE SEND TO THE SERVER, THIS CAN BE REPEATED AD-NAU
     signal_Send = "Button 7"
     sigSent = signal_Send.encode()
     s.send(sigSent)
-def button8(): ## Further Example
-    signal_Send = "Button 8"
+def button1(): ## Further Example
+    signal_Send = "Button 1"
     sigSent = signal_Send.encode()
     s.send(sigSent)
 
@@ -62,15 +62,15 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
 
     # Lists all our buttons DO NOT USE ROW 5 as this will break the logo formatting
     # Left Row
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button1', ).grid(row=1, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Pull / Update Images', command=button1 ).grid(row=1, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button2', ).grid(row=2, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button3', ).grid(row=3, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button4', ).grid(row=4, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button5', ).grid(row=6, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button6', ).grid(row=7, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button7', command=button7).grid(row=8, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button8', command=button8).grid(row=9, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Exit', command=disconnect).grid(row=10, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='button7', ).grid(row=8, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='button8', ).grid(row=9, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Exit', command=quit).grid(row=10, column=1, pady=0)
     # Right Row
     Button(win2, bg='#ca891d', activebackground='gray25', text='button9', ).grid(row=1, column=3, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button10', ).grid(row=2, column=3, pady=0)

@@ -211,23 +211,25 @@ def resource(container):
     input("\nfinished, press enter...\n")
     menu()
 
+def checkimage():
+    imageflag = Path("./flag")
+    if imageflag.is_file():
+        print("\nimages already pulled, proceeding\n")
+        print("the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+        menu()
 
-imageflag = Path("./flag")
-if imageflag.is_file():
-    print("\nimages already pulled, proceeding\n")
-    print("the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
-    menu()
+    else:
+        print("pulling images\n")
+        open("flag", "w")
+        client.images.pull('dariusbakunas/kippo')  # medium interaction SSH honeypot
+        print("kippo pulled...")
+        client.images.pull('mysql')  # dependency for kippo - data storage
+        print("mySQL pulled...")
+        client.images.pull('dariusbakunas/kippo-graph')  # dependency for kippo - analysing kippo data
+        print("kippo-graph pulled...")
 
-else:
-    print("pulling images\n")
-    #open("flag", "w")
-    client.images.pull('dariusbakunas/kippo')  # medium interaction SSH honeypot
-    print("kippo pulled...")
-    client.images.pull('mysql')  # dependency for kippo - data storage
-    print("mySQL pulled...")
-    client.images.pull('dariusbakunas/kippo-graph')  # dependency for kippo - analysing kippo data
-    print("kippo-graph pulled...")
+        print("\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
 
-    print("\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+        menu()
 
-    menu()
+checkimage()
