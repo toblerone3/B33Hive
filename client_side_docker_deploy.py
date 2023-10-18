@@ -48,7 +48,11 @@ def create():
     print(
         "\n1) create kippo \n2) create mySQL  \n3) create kippo-graphs \n4) exit") #mysql for data logging, kippo-graphs for viewing the data
 
-    print("the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+    print("available containers: \n")
+    print(client.containers.list(all=True))
+
+    print("\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP\n")
+
     try:
         choice = int(input("enter a number: "))
     except:
@@ -134,7 +138,7 @@ def destroy(container):
     menu()
 
 
-def start(container):
+def start():
     print()
     client.containers.list(all=True)
     print()
@@ -147,7 +151,7 @@ def start(container):
 
     client.containers.run(name=startname)
     print()
-    print("container status: " + container.name.status)
+    print("container status: " + client.name.status())
     input("\nfinished, press enter...\n")
     menu()
 
