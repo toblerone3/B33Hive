@@ -42,7 +42,7 @@ def menu(): #main menu. for more information, please reread
         menu()
 
 
-def create(Container):
+def create():
     kipponame = "kippo-" + randomword(8)
 
     print(
@@ -84,7 +84,7 @@ def create(Container):
             print(
                 "the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
             sqlname = "sql-" + kipponame
-            client.containers.start(name=sqlname, detach=False, tty=False)
+            client.containers.create(name=sqlname, environment=["MYSQL_ROOT_PASSWORD=K[5UZ4ELSf;e)gX="], image='mysql')
             client.containers.create(name="kippo-graphs-" + kipponame, links={sqlname: 'mysql'},
                                      image="dariusbakunas/kippo-graph")
         else:
