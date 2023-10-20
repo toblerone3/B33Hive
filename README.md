@@ -18,4 +18,8 @@ Suitable Distros for Linux testing include:
 [Fedora](https://fedoraproject.org/), ([X](https://xubuntu.org/)/[K](https://kubuntu.org/))[Ubuntu](https://ubuntu.com/), [Debian](https://www.debian.org/)
 etc...
 
+Requires the Following Ports to be Open:
+5003 - Main Client - Server functionality
+5004 - Reverse Shell
 
+You can change these ports in Server.py and reverseshell/reserveServer.py and reverseshell/reserveClient.py
