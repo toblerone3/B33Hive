@@ -1,17 +1,17 @@
 import socket
 
-SERVER_HOST = "127.0.0.1"
-SERVER_PORT = 5003
+SHELL_HOST = "127.0.0.1"
+SHELL_PORT = 5004
 BUFFER_SIZE = 1024 * 128 # 128KB max size of messages, feel free to increase
 # separator string for sending 2 messages in one go
 SEPARATOR = "<sep>"
 # create a socket object
 s = socket.socket()
 
-s.bind((SERVER_HOST, SERVER_PORT))
+s.bind((SHELL_HOST, SHELL_PORT))
 
 s.listen(5)
-print(f"Listening as {SERVER_HOST}:{SERVER_PORT} ...")
+print(f"Listening as {SHELL_HOST}:{SHELL_PORT} ...")
 
 client_socket, client_address = s.accept()
 print(f"{client_address[0]}:{client_address[1]} Connected!")

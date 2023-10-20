@@ -1,20 +1,38 @@
 import socket
 import tkinter
+import subprocess
+import os
+import platform
 from tkinter import *
 from PIL import ImageTk, Image
+
+
+whichOS = platform.system()
+print("Launching",whichOS, "B33Hive Client") ##Just a debug, we need this logic later
 
 Attempts = 0
 
 PIN = ''
 
+
 def button7(): ## THIS IS HOW WE SEND TO THE SERVER, THIS CAN BE REPEATED AD-NAUSEAM
     signal_Send = "Button 7"
     sigSent = signal_Send.encode()
     s.send(sigSent)
+
+
 def button1(): ## Further Example
     signal_Send = "Button 1"
     sigSent = signal_Send.encode()
     s.send(sigSent)
+
+
+def reverseshell():  # Launches our Reverse Shell
+    signal_Send = "Reverse Shell"
+    sigSent = signal_Send.encode()
+    s.send(sigSent)
+    # os.system("start cmd /k /reverseshell/reverseClient.py")
+    subprocess.run(["python", "reverseshell/reverseServer.py"])
 
 
 def disconnect():
@@ -39,7 +57,7 @@ def show_data():
     win.destroy()
 
 
-def debugMain(): ##This is how we skip to the main menu for debug, does not connect to the server
+def debugMain():  # This is how we skip to the main menu for debug, does not connect to the server
     win.destroy()
     mainMenu()
 
@@ -79,7 +97,7 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
     Button(win2, bg='#ca891d', activebackground='gray25', text='button13', ).grid(row=6, column=3, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button14', ).grid(row=7, column=3, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button15', ).grid(row=8, column=3, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button16', ).grid(row=9, column=3, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Start Remote Shell', command=reverseshell).grid(row=9, column=3, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='Disconnect', command=disconnect).grid(row=10, column=3, pady=0) ##Both Buttons currently call disconnect due to the fact we can't recall our login screen
 
     entryBox = Entry(win2, width=32, bg="gray25", fg='#ca891d')
@@ -161,7 +179,8 @@ while True:
         if SERVER_PIN != CLIENT_PIN:
             print(SERVER_PIN, CLIENT_PIN)
             print("Incorrect PIN - Disconnecting")
-            break ##CURRENTY ONLY BREAKS INSTEAD OF DISCONNECTING, CAN HARD DISCONNECT WITH QUIT() BUT CLOSE THE SOCKET FIRST
+            disconnect()
+            #break ##CURRENTY ONLY BREAKS INSTEAD OF DISCONNECTING, CAN HARD DISCONNECT WITH QUIT() BUT CLOSE THE SOCKET FIRST
         elif SERVER_PIN == CLIENT_PIN:
             print("Correct PIN")
             break
