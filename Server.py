@@ -8,14 +8,13 @@ import string
 import sys
 from pathlib import Path
 
-
-client = docker.from_env() # detects the docker installation and assigns this to a variable
+client = docker.from_env()  # detects the docker installation and assigns this to a variable
 
 hostname = socket.gethostname()
 IPAddr = socket.gethostbyname(hostname)
 
 # server's IP address
-SERVER_HOST = '127.0.0.1'    # IPAddr # IMPORTANT - BEFORE SUBMISSION, REPLACE '127.0.0.1' WITH IPAddr (as is commented, this is for development ONLY)
+SERVER_HOST = '127.0.0.1'  # IPAddr # IMPORTANT - BEFORE SUBMISSION, REPLACE '127.0.0.1' WITH IPAddr (as is commented, this is for development ONLY)
 SERVER_PORT = 5003  # port we want to use
 SERVER_PIN = '8888'
 Attempts = 0
@@ -40,12 +39,14 @@ if PIN_ASK.lower() == 'y':
 Attempts = 0
 
 
-def reverseshell():
-    #with open("reverseshell/reverseClient.py") as f:
-        #exec(f.read())
-    #os.system("start cmd /k reverseClient.py")
+def reverseshell():  # This Function Launches our Reverse Shell
     subprocess.run(["python", "reverseshell/reverseClient.py"])
     print("Shell Running")
+
+
+def randomword(length): # user for human readable names, for naming containers. better an id tag
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(length))
 
 
 def checkimage():
@@ -53,7 +54,6 @@ def checkimage():
     if imageflag.is_file():
         print("\nimages already pulled, proceeding\n")
         print("the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
-        #menu()
 
     else:
         print("pulling images\n")
@@ -67,7 +67,7 @@ def checkimage():
 
         print("\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
 
-        #menu()
+
 
 while True:
     if Attempts >= 3:
@@ -106,20 +106,23 @@ def listen_for_client(cs):
             # keep listening for a message from cs socket
             msg = cs.recv(1024).decode()
             print(msg)
-            if msg == "Button 1":
-                print("Button 1 Okay")
+            if msg == "pullImages":
+                print("Pulling Current Images..")
                 checkimage()
             if msg == "Button 7":
                 print("Button 7 Okay")
             if msg == "Reverse Shell":
                 print("Starting Shell")
                 reverseshell()
-                break
+            if msg == "Show Running Containers":
+                print("Getting Containers")
+                runningContainers = str(client.containers.list(all=True))
+                returnSig = runningContainers.encode()
+                client_socket.send(returnSig)
             if msg == "Disconnect":
                 print("Client Disconnecting")
                 break
             msg = ""
-            #quit() ##PLACE HOLDER, WE WILL WANT TO MAP MESSAGES TO COMMANDS FROM HERE
         except Exception as e:
             # client no longer connected
             # remove it from the set

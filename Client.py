@@ -21,10 +21,23 @@ def button7(): ## THIS IS HOW WE SEND TO THE SERVER, THIS CAN BE REPEATED AD-NAU
     s.send(sigSent)
 
 
-def button1(): ## Further Example
-    signal_Send = "Button 1"
+def pullImages(): ## Further Example
+    signal_Send = "pullImages"
     sigSent = signal_Send.encode()
     s.send(sigSent)
+
+
+def runningContainers(): ## Further Example
+    signal_Send = "Show Running Containers"
+    sigSent = signal_Send.encode()
+    s.send(sigSent)
+    while True:
+        currentcontainers = s.recv(2048)
+        printcontainers = currentcontainers.decode()
+        print("Current Containers:")
+        print(printcontainers)#[1:][:-1]
+        if currentcontainers != '':
+            break
 
 
 def reverseshell():  # Launches our Reverse Shell
@@ -80,13 +93,13 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
 
     # Lists all our buttons DO NOT USE ROW 5 as this will break the logo formatting
     # Left Row
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Pull / Update Images', command=button1 ).grid(row=1, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button2', ).grid(row=2, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Pull / Update Images', command=pullImages).grid(row=1, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='See Current Containers', command=runningContainers).grid(row=2, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button3', ).grid(row=3, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button4', ).grid(row=4, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button5', ).grid(row=6, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button6', ).grid(row=7, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button7', ).grid(row=8, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='button7', command=button7 ).grid(row=8, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button8', ).grid(row=9, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='Exit', command=quit).grid(row=10, column=1, pady=0)
     # Right Row
@@ -180,7 +193,6 @@ while True:
             print(SERVER_PIN, CLIENT_PIN)
             print("Incorrect PIN - Disconnecting")
             disconnect()
-            #break ##CURRENTY ONLY BREAKS INSTEAD OF DISCONNECTING, CAN HARD DISCONNECT WITH QUIT() BUT CLOSE THE SOCKET FIRST
         elif SERVER_PIN == CLIENT_PIN:
             print("Correct PIN")
             break
