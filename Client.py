@@ -69,6 +69,22 @@ def show_data():
     print(rawPort)
     win.destroy()
 
+def menu1Grab():
+    global serverIP
+    global rawPort
+    serverIP = servIP.get()
+    rawPort = port.get()
+    print('Connecting to %s on port %s' % (servIP.get(), port.get()))
+    print(serverIP)
+    print(rawPort)
+    win.destroy()
+    pinMenu()
+
+def menu2Grab():
+    global CLIENT_PIN
+    CLIENT_PIN = entryPIN.get()
+    print(CLIENT_PIN)
+    winpin.destroy()
 
 def debugMain():  # This is how we skip to the main menu for debug, does not connect to the server
     win.destroy()
@@ -120,6 +136,29 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
 
     mainloop()
 
+def pinMenu():
+    global entryPIN
+    global winpin
+    winpin = Tk()
+    winpin.title("B33Hive: Connect to a Server")
+    # win.geometry("640x480")
+    winpin.resizable(True, True)
+    winpin.configure(bg='#010204')
+    # Loads an Image
+    Logo = Image.open("B33Hive.png")
+    photo = ImageTk.PhotoImage(Logo)
+    winpin.wm_iconphoto(False, photo)  # this sets our icon
+    # Puts image into a label
+    conLogo = Label(image=photo, highlightthickness=0, background='#010204')
+    conLogo.image = photo
+    conLogo.grid(row=5, column=8, sticky=W, pady=4)
+    Label(winpin, bg='black', fg='white', text='NOTE: If there is no pin, leave blank...').grid(row=7, column=8)
+    entryPIN = Entry(winpin, width=6, bg="gray25", fg='#ca891d')
+    entryPIN.grid(row=12, column=8)
+    Label(winpin, bg='black', fg='white', text='PIN (Optional):').grid(row=12, column=7)
+    Button(winpin, bg='#ca891d', activebackground='gray25', text='Enter', command=menu2Grab).grid(row=13, column=9, pady=0)
+    Button(winpin, bg='#ca891d', activebackground='gray25', text='Exit', command=winpin.quit).grid(row=13, column=7, pady=0)
+    winpin.mainloop()
 
 win = Tk()
 win.title("B33Hive: Connect to a Server")
@@ -142,19 +181,19 @@ Label(win, bg='black', fg='white', text='').grid(row=8, column=8) ##Blank Labels
 # These are descriptors for the entry boxes
 Label(win, bg='black', fg='white', text='Server IP').grid(row=10, column=7)
 Label(win, bg='black', fg='white', text='Port').grid(row=11, column=7)
-Label(win, bg='black', fg='white', text='PIN (Optional)').grid(row=12, column=7)
+####Label(win, bg='black', fg='white', text='PIN (Optional)').grid(row=12, column=7) ####REDUNDANT####
 
 
 # These are our entry boxes
 servIP = Entry(win, width=16, bg="gray25", fg='#ca891d')
 port = Entry(win, width=6, bg="gray25", fg='#ca891d')
-entryPIN = Entry(win, width=6, bg="gray25", fg='#ca891d')
+#entryPIN = Entry(win, width=6, bg="gray25", fg='#ca891d') ####REDUNDANT####
 
 servIP.grid(row=10, column=8)
 port.grid(row=11, column=8)
-entryPIN.grid(row=12, column=8)
+#entryPIN.grid(row=12, column=8) ####REDUNDANT####
 
-Button(win, bg='#ca891d', activebackground='gray25', text='Connect', command=show_data).grid(row=13, column=9, pady=0)
+Button(win, bg='#ca891d', activebackground='gray25', text='Connect', command=menu1Grab).grid(row=13, column=9, pady=0)
 Button(win, bg='#ca891d', activebackground='gray25', text='Exit', command=win.quit).grid(row=13, column=7, pady=0)
 Button(win, bg='#ca891d', activebackground='gray25', text='Debug Main', command=debugMain).grid(row=1, column=9, pady=0)
 # added 'Debug Main' to load main menu without having to connect to the server, remove before hand in
@@ -176,7 +215,7 @@ SERVER_HOST = str(SERVER_HOST)
 SERVER_PORT = int(SERVER_PORT)
 # connect to the server
 s.connect((SERVER_HOST, SERVER_PORT))  # From this point on, we're talking to the server
-print("[+] Connected.")
+
 
 recvPIN = s.recv(4096)
 SERVER_PIN = recvPIN.decode('utf-8')
@@ -184,22 +223,25 @@ SERVER_PIN = recvPIN.decode('utf-8')
 
 # print("Variable: SERVER_PIN:", SERVER_PIN,"Variable recvPIN:", recvPIN) # (debug option for PINS)
 
-while True:
+totalAttempts = 3
+while Attempts < 2:
     if SERVER_PIN == '8888': ##8888 is the default pin, if the server doesn't have a pin, it will be automatically set to 8888, so we're checking if we can skip
         print("Server Has No Pin, Continuing...")
         break
     if SERVER_PIN != '8888':
-        if SERVER_PIN != CLIENT_PIN:
+        if SERVER_PIN != CLIENT_PIN and Attempts < 2:
+            Attempts = Attempts + 1
+            if Attempts == 3:
+                s.close()
+                exit()
             print(SERVER_PIN, CLIENT_PIN)
-            print("Incorrect PIN - Disconnecting")
-            disconnect()
+            print("Incorrect PIN", totalAttempts-Attempts, "remaining...")
+            pinMenu()
         elif SERVER_PIN == CLIENT_PIN:
             print("Correct PIN")
-            break
+            print("Connected.")
+            mainMenu()
 
 
 
-mainMenu()
 
-# close the socket
-s.close()
