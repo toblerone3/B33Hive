@@ -158,6 +158,7 @@ def pinMenu():
     Label(winpin, bg='black', fg='white', text='PIN (Optional):').grid(row=12, column=7)
     Button(winpin, bg='#ca891d', activebackground='gray25', text='Enter', command=menu2Grab).grid(row=13, column=9, pady=0)
     Button(winpin, bg='#ca891d', activebackground='gray25', text='Exit', command=winpin.quit).grid(row=13, column=7, pady=0)
+    winpin.bind('<Return>', lambda e, w=winpin: menu2Grab())
     winpin.mainloop()
 
 
@@ -193,13 +194,14 @@ port = Entry(win, width=6, bg="gray25", fg='#ca891d')
 servIP.grid(row=10, column=8)
 port.grid(row=11, column=8)
 #entryPIN.grid(row=12, column=8) ####REDUNDANT####
-
+win.bind('<Return>', lambda e, w=win: menu1Grab())
 Button(win, bg='#ca891d', activebackground='gray25', text='Connect', command=menu1Grab).grid(row=13, column=9, pady=0)
 Button(win, bg='#ca891d', activebackground='gray25', text='Exit', command=win.quit).grid(row=13, column=7, pady=0)
 Button(win, bg='#ca891d', activebackground='gray25', text='Debug Main', command=debugMain).grid(row=1, column=9, pady=0)
 # added 'Debug Main' to load main menu without having to connect to the server, remove before hand in
 
 mainloop()  # End of First Tkinter Window
+
 # server's IP address
 # if the server is not on this machine,
 # put the private (network) IP address (e.g 192.168.1.2)
@@ -234,7 +236,6 @@ while True:
             Attempts = Attempts + 1
             print(SERVER_PIN, CLIENT_PIN)
             print("Incorrect PIN", totalAttempts-Attempts, "remaining...")
-            print(Attempts)
             pinMenu()
         elif SERVER_PIN == CLIENT_PIN:
             print("Correct PIN")
