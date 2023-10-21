@@ -8,7 +8,16 @@ import string
 import sys
 from pathlib import Path
 
-client = docker.from_env()  # detects the docker installation and assigns this to a variable
+dockerDebug = input("Launch without Docker? [Y/N] (DEBUG, REMOVE BEFORE HAND IN)")
+while dockerDebug.lower() not in ('y', 'n'):
+    dockerDebug = input("Please Enter Only a Y or an N Character: ")
+if dockerDebug.lower() == 'n':
+    print("Alright, just don't forget, Dockers not gonna work")
+if dockerDebug.lower() == 'y':
+    client = docker.from_env()
+
+# Line 21 commented out, replace lines 11-18 with this one liner before hand in, this is for ease of use
+# client = docker.from_env()  # detects the docker installation and assigns this to a variable
 
 hostname = socket.gethostname()
 IPAddr = socket.gethostbyname(hostname)
