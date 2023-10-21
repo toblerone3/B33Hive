@@ -160,6 +160,7 @@ def pinMenu():
     Button(winpin, bg='#ca891d', activebackground='gray25', text='Exit', command=winpin.quit).grid(row=13, column=7, pady=0)
     winpin.mainloop()
 
+
 win = Tk()
 win.title("B33Hive: Connect to a Server")
 # win.geometry("640x480")
@@ -224,23 +225,24 @@ SERVER_PIN = recvPIN.decode('utf-8')
 # print("Variable: SERVER_PIN:", SERVER_PIN,"Variable recvPIN:", recvPIN) # (debug option for PINS)
 
 totalAttempts = 3
-while Attempts < 2:
+while True:
     if SERVER_PIN == '8888': ##8888 is the default pin, if the server doesn't have a pin, it will be automatically set to 8888, so we're checking if we can skip
         print("Server Has No Pin, Continuing...")
         break
     if SERVER_PIN != '8888':
         if SERVER_PIN != CLIENT_PIN and Attempts < 2:
             Attempts = Attempts + 1
-            if Attempts == 3:
-                s.close()
-                exit()
             print(SERVER_PIN, CLIENT_PIN)
             print("Incorrect PIN", totalAttempts-Attempts, "remaining...")
+            print(Attempts)
             pinMenu()
         elif SERVER_PIN == CLIENT_PIN:
             print("Correct PIN")
             print("Connected.")
             mainMenu()
+        else:
+            print("Pin Attempts Exceed, Disconnecting")
+            disconnect()
 
 
 
