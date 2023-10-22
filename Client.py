@@ -5,6 +5,7 @@ import os
 import platform
 from tkinter import *
 from PIL import ImageTk, Image
+from idlelib.tooltip import Hovertip
 
 
 whichOS = platform.system()
@@ -117,7 +118,7 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
     Button(win2, bg='#ca891d', activebackground='gray25', text='button6', ).grid(row=7, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button7', command=button7 ).grid(row=8, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button8', ).grid(row=9, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Exit', command=quit).grid(row=10, column=1, pady=0)
+    exitButton = Button(win2, bg='#ca891d', activebackground='gray25', text='Exit', command=quit)  # This allows us to reference a button later
     # Right Row
     Button(win2, bg='#ca891d', activebackground='gray25', text='button9', ).grid(row=1, column=3, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button10', ).grid(row=2, column=3, pady=0)
@@ -128,6 +129,10 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
     Button(win2, bg='#ca891d', activebackground='gray25', text='button15', ).grid(row=8, column=3, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='Start Remote Shell', command=reverseshell).grid(row=9, column=3, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='Disconnect', command=disconnect).grid(row=10, column=3, pady=0) ##Both Buttons currently call disconnect due to the fact we can't recall our login screen
+
+    # TO-DO: We should remove this and the exit button before hand in as they are only for debug purposes
+    exitbuttontip = Hovertip(exitButton, "DO NOT USE IF YOU'RE CONNECTED TO THE SERVER")  # Here we're referencing the exit button we saved as a variable
+    exitButton.grid(row=10, column=1, pady=0)  # Here we tell tkinter to put exitbutton into the grid
 
     entryBox = Entry(win2, width=32, bg="gray25", fg='#ca891d')
     entryBox.grid(row=9, column=2)
