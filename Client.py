@@ -235,7 +235,7 @@ totalAttempts = 3
 while True:
     if SERVER_PIN == '8888': ##8888 is the default pin, if the server doesn't have a pin, it will be automatically set to 8888, so we're checking if we can skip
         print("Server Has No Pin, Continuing...")
-        break
+        mainMenu()
     if SERVER_PIN != '8888':
         if SERVER_PIN != CLIENT_PIN and Attempts < 2:
             Attempts = Attempts + 1

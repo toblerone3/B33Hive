@@ -8,7 +8,7 @@ import string
 import sys
 from pathlib import Path
 
-dockerDebug = input("Launch without Docker? [Y/N] (DEBUG, REMOVE BEFORE HAND IN)")
+dockerDebug = input("Launch with Docker? [Y/N] (DEBUG, REMOVE BEFORE HAND IN)")
 while dockerDebug.lower() not in ('y', 'n'):
     dockerDebug = input("Please Enter Only a Y or an N Character: ")
 if dockerDebug.lower() == 'n':
