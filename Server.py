@@ -124,8 +124,20 @@ def listen_for_client(cs):
                     client_socket.send(returnSig)
                 else:
                     checkimage()
-            if msg == "Button 7":
-                print("Button 7 Okay")
+            if msg == "Get Container Logs":
+                print("Getting Containers")
+                containerList = str(client.containers.list(all=True))
+                returnSig = containerList.encode()
+                client_socket.send(returnSig)
+                logname = cs.recv(1024).decode()
+                print(logname)
+                print("Check 1")
+                containerlogs = client.containers.get(logname)
+                print("Check 2")
+                print(containerlogs.logs())
+                logstosend = str(containerlogs.logs())
+                returnLogs = logstosend.encode()
+                client_socket.send(returnLogs)
             if msg == "Reverse Shell":
                 print("Starting Shell")
                 reverseshell()
