@@ -5,6 +5,7 @@ import os
 import subprocess
 import random
 import string
+import datetime
 import sys
 from pathlib import Path
 
@@ -61,7 +62,8 @@ def create():
 
     print("\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP\n")
 
-    kipponame = "kippo-" + randomword(8)
+    randomsuffix = randomword(8)
+    kipponame = "kippo-" + randomsuffix
     sqlname = "sql-" + kipponame
     graphname = "graph-" + kipponame
 
@@ -69,8 +71,7 @@ def create():
     client.containers.create(name=sqlname, environment=["MYSQL_ROOT_PASSWORD=K[5UZ4ELSf;e)gX="], image='mysql:5.6')
     client.containers.create(name=graphname, links={sqlname: 'mysql'},image="dariusbakunas/kippo-graph")
 
-
-
+    print("kippo containers made with the suffix: " + randomsuffix + "created at: " + datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
 
 def checkimage():
@@ -130,6 +131,8 @@ def listen_for_client(cs):
             # keep listening for a message from cs socket
             msg = cs.recv(1024).decode()
             print(msg)
+            if msg
+
             if msg == "StartContainer":
                 print("listing all containers")
                 runningContainers = str(client.containers.list(all=True))
