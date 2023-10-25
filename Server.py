@@ -57,6 +57,21 @@ def randomword(length): # user for human readable names, for naming containers. 
     letters = string.ascii_lowercase
     return ''.join(random.choice(letters) for i in range(length))
 
+def create():
+
+    print("\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP\n")
+
+    kipponame = "kippo-" + randomword(8)
+    sqlname = "sql-" + kipponame
+    graphname = "graph-" + kipponame
+
+    client.configs.create(name=kipponame, links={sqlname: 'mysql'}, KIPPO_DB_PASSWORD="K[5UZ4ELSf;e)gX=", KIPPO_SRV_NAME="Barry B's Workstation", image="dariusbakunas/kippo")
+    client.containers.create(name=sqlname, environment=["MYSQL_ROOT_PASSWORD=K[5UZ4ELSf;e)gX="], image='mysql:5.6')
+    client.containers.create(name=graphname, links={sqlname: 'mysql'},image="dariusbakunas/kippo-graph")
+
+
+
+
 
 def checkimage():
     imageflag = Path("./flag")
@@ -115,6 +130,16 @@ def listen_for_client(cs):
             # keep listening for a message from cs socket
             msg = cs.recv(1024).decode()
             print(msg)
+            if msg == "StartContainer":
+                print("listing all containers")
+                runningContainers = str(client.containers.list(all=True))
+                returnSig = runningContainers.encode()
+                client_socket.send(returnSig)
+                try:
+                    startname = str(input("Enter name or ID of non-running container "))
+                except:
+                    print("invalid input")
+
             if msg == "pullImages":
                 imageflag = Path("./flag")
                 print("Pulling Current Images..")
@@ -149,6 +174,10 @@ def listen_for_client(cs):
             if msg == "Disconnect":
                 print("Client Disconnecting")
                 break
+
+            if msg == "create container":
+
+
             msg = ""
         except Exception as e:
             # client no longer connected
