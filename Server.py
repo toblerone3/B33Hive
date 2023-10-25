@@ -66,31 +66,34 @@ def create():
     kipponame = "kippo-" + randomsuffix
     sqlname = "sql-" + kipponame
     graphname = "graph-" + kipponame
+    currenttime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-    client.configs.create(name=kipponame, links={sqlname: 'mysql'}, KIPPO_DB_PASSWORD="K[5UZ4ELSf;e)gX=", KIPPO_SRV_NAME="Barry B's Workstation", image="dariusbakunas/kippo")
+    client.containers.create(name=kipponame, links={sqlname: 'mysql:5.6'}, image="dariusbakunas/kippo", environment=["KIPPO_DB_PASSWORD=K[5UZ4ELSf;e)gX=, KIPPO_SRV_NAME=Barry-Bs-Workstation"])
+    print(kipponame + " container created")
     client.containers.create(name=sqlname, environment=["MYSQL_ROOT_PASSWORD=K[5UZ4ELSf;e)gX="], image='mysql:5.6')
-    client.containers.create(name=graphname, links={sqlname: 'mysql'},image="dariusbakunas/kippo-graph")
+    print(sqlname + "container created")
+    client.containers.create(name=graphname, links={sqlname: 'mysql:5.6'},image="dariusbakunas/kippo-graph")
+    print(graphname + "container created")
 
-    print("kippo containers made with the suffix: " + randomsuffix + "created at: " + datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    confirmationmessage = print("kippo container and dependencies made with the suffix: " + randomsuffix + "created at: " + currenttime)
+
+    runningContainers = confirmationmessage
+    returnSig = runningContainers.encode()
+    client_socket.send(returnSig)
+
 
 
 def checkimage():
-    imageflag = Path("./flag")
-    if imageflag.is_file():
-        print("\nimages already pulled, proceeding\n")
-        print("the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+    print("pulling images\n")
+    client.images.pull('dariusbakunas/kippo')  # medium interaction SSH honeypot
+    print("kippo pulled...")
+    client.images.pull('mysql')  # dependency for kippo - data storage
+    print("mySQL pulled...")
+    client.images.pull('dariusbakunas/kippo-graph')  # dependency for kippo - analysing kippo data
+    print("kippo-graph pulled...")
 
-    else:
-        print("pulling images\n")
-        open("flag", "w")
-        client.images.pull('dariusbakunas/kippo')  # medium interaction SSH honeypot
-        print("kippo pulled...")
-        client.images.pull('mysql')  # dependency for kippo - data storage
-        print("mySQL pulled...")
-        client.images.pull('dariusbakunas/kippo-graph')  # dependency for kippo - analysing kippo data
-        print("kippo-graph pulled...")
-
-        print("\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+    print("\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+    listen_for_client()
 
 
 
@@ -131,7 +134,8 @@ def listen_for_client(cs):
             # keep listening for a message from cs socket
             msg = cs.recv(1024).decode()
             print(msg)
-            if msg
+            if msg == "CreateContainer":
+                create()
 
             if msg == "StartContainer":
                 print("listing all containers")
@@ -165,8 +169,6 @@ def listen_for_client(cs):
             if msg == "Disconnect":
                 print("Client Disconnecting")
                 break
-
-            if msg == "create container":
 
 
             msg = ""

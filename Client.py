@@ -21,6 +21,16 @@ def button7(): ## THIS IS HOW WE SEND TO THE SERVER, THIS CAN BE REPEATED AD-NAU
     sigSent = signal_Send.encode()
     s.send(sigSent)
 
+def create():
+    signal_Send = "CreateContainer"  # We store what we want to send to the server here
+    sigSent = signal_Send.encode()  # Then we encode it into bytes
+    s.send(sigSent)  # then we send it using s.send
+    while True:  # we then start a listener
+        CreateContainers = s.recv(2048)  # and wait for a message from the server
+        printContainers = CreateContainers.decode()  # we then turn it back into a string
+        print(printContainers)  # and print it
+        if CreateContainers != '':  # this just checks to see if we got anything, once the server responds the loop breaks
+            break
 
 def pullImages(): ## Further Example
     signal_Send = "pullImages"  # We store what we want to send to the server here
@@ -117,7 +127,7 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
     # Left Row
     Button(win2, bg='#ca891d', activebackground='gray25', text='Pull / Update Images', command=pullImages).grid(row=1, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='See Current Containers', command=runningContainers).grid(row=2, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button3', ).grid(row=3, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Create Containers', command=create ).grid(row=3, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button4', ).grid(row=4, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button5', ).grid(row=6, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button6', ).grid(row=7, column=1, pady=0)
