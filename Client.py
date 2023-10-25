@@ -23,9 +23,15 @@ def button7(): ## THIS IS HOW WE SEND TO THE SERVER, THIS CAN BE REPEATED AD-NAU
 
 
 def pullImages(): ## Further Example
-    signal_Send = "pullImages"
-    sigSent = signal_Send.encode()
-    s.send(sigSent)
+    signal_Send = "pullImages"  # We store what we want to send to the server here
+    sigSent = signal_Send.encode()  # Then we encode it into bytes
+    s.send(sigSent)  # then we send it using s.send
+    while True: # we then start a listener
+        pulledimages = s.recv(2048) # and wait for a message from the server
+        printimages = pulledimages.decode() # we then turn it back into a string
+        print(printimages) # and print it
+        if pulledimages != '':  # this just checks to see if we got anything, once the server responds the loop breaks
+            break
 
 
 def runningContainers(): ## Further Example

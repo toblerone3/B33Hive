@@ -116,8 +116,14 @@ def listen_for_client(cs):
             msg = cs.recv(1024).decode()
             print(msg)
             if msg == "pullImages":
+                imageflag = Path("./flag")
                 print("Pulling Current Images..")
-                checkimage()
+                if imageflag.is_file():
+                    returnStr = "Images Already Pulled"
+                    returnSig = returnStr.encode()
+                    client_socket.send(returnSig)
+                else:
+                    checkimage()
             if msg == "Button 7":
                 print("Button 7 Okay")
             if msg == "Reverse Shell":
