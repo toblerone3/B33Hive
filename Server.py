@@ -70,9 +70,6 @@ def create():
     client.containers.create(name=graphname, links={sqlname: 'mysql'},image="dariusbakunas/kippo-graph")
 
 
-
-
-
 def checkimage():
     imageflag = Path("./flag")
     if imageflag.is_file():
@@ -90,7 +87,6 @@ def checkimage():
         print("kippo-graph pulled...")
 
         print("\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
-
 
 
 while True:
@@ -118,7 +114,6 @@ s.bind((SERVER_HOST, SERVER_PORT))
 s.listen(5)
 print(f"[*] Listening as {SERVER_HOST}:{SERVER_PORT}")
 
-#
 
 def listen_for_client(cs):
     """
@@ -174,17 +169,14 @@ def listen_for_client(cs):
             if msg == "Disconnect":
                 print("Client Disconnecting")
                 break
-
             if msg == "create container":
-
-
+                print("Create Container")
             msg = ""
         except Exception as e:
             # client no longer connected
             # remove it from the set
             print(f"[!] Error: {e}")
             client_sockets.remove(cs)
-
 
 
 while True:
