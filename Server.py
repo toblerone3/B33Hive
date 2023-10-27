@@ -8,7 +8,7 @@ import string
 import sys
 from pathlib import Path
 
-dockerDebug = input("Launch with Docker? [Y/N] (DEBUG, REMOVE BEFORE HAND IN)")
+dockerDebug = input("Launch with Docker? [Y/N] (DEBUG, REMOVE BEFORE HAND IN):")
 while dockerDebug.lower() not in ('y', 'n'):
     dockerDebug = input("Please Enter Only a Y or an N Character: ")
 if dockerDebug.lower() == 'n':
@@ -146,18 +146,23 @@ def listen_for_client(cs):
                     checkimage()
             if msg == "Get Container Logs":
                 print("Getting Containers")
+                # Sends Container List
                 containerList = str(client.containers.list(all=True))
                 returnSig = containerList.encode()
                 client_socket.send(returnSig)
+                # Waits for Response from Client
                 logname = cs.recv(1024).decode()
-                print(logname)
-                print("Check 1")
-                containerlogs = client.containers.get(logname)
-                print("Check 2")
-                print(containerlogs.logs())
-                logstosend = str(containerlogs.logs())
-                returnLogs = logstosend.encode()
-                client_socket.send(returnLogs)
+                if logname == "Cancel":
+                    listen_for_client(cs)
+                else:
+                    print(logname)
+                    print("Check 1")
+                    containerlogs = client.containers.get(logname)
+                    print("Check 2")
+                    print(containerlogs.logs())
+                    logstosend = str(containerlogs.logs())
+                    returnLogs = logstosend.encode()
+                    client_socket.send(returnLogs)
             if msg == "Reverse Shell":
                 print("Starting Shell")
                 reverseshell()

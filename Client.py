@@ -31,7 +31,6 @@ def logcontainers(): ## THIS IS HOW WE SEND TO THE SERVER, THIS CAN BE REPEATED 
     logMenu()
 
 
-
 def pullImages(): ## Further Example
     signal_Send = "pullImages"  # We store what we want to send to the server here
     sigSent = signal_Send.encode()  # Then we encode it into bytes
@@ -43,9 +42,9 @@ def pullImages(): ## Further Example
         if pulledimages != '':  # this just checks to see if we got anything, once the server responds the loop breaks
             break
 
+
 def createcontainer():
     print("Create Container")
-
 
 
 def runningContainers(): ## Further Example
@@ -127,6 +126,12 @@ def logMenuGrab():
     logsreturned = s.recv(4096)
     print(logsreturned)
 
+def logquit():
+    signal_Send = "Cancel"
+    sigSent = signal_Send.encode()
+    s.send(sigSent)
+    winlog.destroy()
+
 def debugMain():  # This is how we skip to the main menu for debug, does not connect to the server
     win.destroy()
     mainMenu()
@@ -181,6 +186,7 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
 
     mainloop()
 
+
 def pinMenu():
     global entryPIN
     global winpin
@@ -206,6 +212,7 @@ def pinMenu():
     winpin.bind('<Return>', lambda e, w=winpin: menu2Grab())
     winpin.mainloop()
 
+
 def logMenu():
     global entryLog
     global winlog
@@ -226,7 +233,7 @@ def logMenu():
     Label(winlog, bg='black', fg='white', text='Container:').grid(row=12, column=7)
     # Buttons
     Button(winlog, bg='#ca891d', activebackground='gray25', text='Enter', command=logMenuGrab).grid(row=13, column=9, pady=0)
-    Button(winlog, bg='#ca891d', activebackground='gray25', text='Exit', command=winlog.quit).grid(row=13, column=7, pady=0)
+    Button(winlog, bg='#ca891d', activebackground='gray25', text='Exit', command=logquit).grid(row=13, column=7, pady=0)
     winlog.mainloop()
 
 
