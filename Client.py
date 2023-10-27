@@ -4,6 +4,7 @@ import subprocess
 import os
 import platform
 from tkinter import *
+from tkinter import messagebox  # Weirdly, despite importing tkinter *, we still need this
 from PIL import ImageTk, Image
 from idlelib.tooltip import Hovertip
 
@@ -61,11 +62,20 @@ def runningContainers(): ## Further Example
 
 
 def reverseshell():  # Launches our Reverse Shell
-    signal_Send = "Reverse Shell"
-    sigSent = signal_Send.encode()
-    s.send(sigSent)
-    # os.system("start cmd /k /reverseshell/reverseClient.py")
-    subprocess.run(["python", "reverseshell/reverseServer.py"])
+    userwarning = messagebox.askyesnocancel("Confirmation", "The Main Menu will freeze while using the Remote Shell"
+                                            "\nType Exit to return to the Main Menu"
+                                            "\nLaunch the Remote Shell?")
+    print(userwarning)
+    if userwarning is True:
+        signal_Send = "Reverse Shell"
+        sigSent = signal_Send.encode()
+        s.send(sigSent)
+        # os.system("start cmd /k /reverseshell/reverseClient.py")
+        subprocess.run(["python", "reverseshell/reverseServer.py"])
+    elif userwarning is False:
+        print("Reverting to Main Menu")
+    elif userwarning is None:
+        print("No Input Detected")
 
 
 def disconnect():
