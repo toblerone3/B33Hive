@@ -4,6 +4,7 @@ import subprocess
 import os
 import platform
 from tkinter import *
+from tkinter import messagebox  # Weirdly, despite importing tkinter *, we still need this
 from PIL import ImageTk, Image
 from idlelib.tooltip import Hovertip
 
@@ -16,21 +17,19 @@ Attempts = 0
 PIN = ''
 
 
-def button7(): ## THIS IS HOW WE SEND TO THE SERVER, THIS CAN BE REPEATED AD-NAUSEAM
-    signal_Send = "Button 7"
+def logcontainers(): ## THIS IS HOW WE SEND TO THE SERVER, THIS CAN BE REPEATED AD-NAUSEAM
+    signal_Send = "Get Container Logs"
     sigSent = signal_Send.encode()
     s.send(sigSent)
-
-def create():
-    signal_Send = "CreateContainer"  # We store what we want to send to the server here
-    sigSent = signal_Send.encode()  # Then we encode it into bytes
-    s.send(sigSent)  # then we send it using s.send
-    while True:  # we then start a listener
-        CreateContainers = s.recv(2048)  # and wait for a message from the server
-        printContainers = CreateContainers.decode()  # we then turn it back into a string
-        print(printContainers)  # and print it
-        if CreateContainers != '':  # this just checks to see if we got anything, once the server responds the loop breaks
+    while True:
+        currentcontainers = s.recv(2048)
+        printcontainers = currentcontainers.decode()
+        print("Current Containers:")
+        print(printcontainers)#[1:][:-1]
+        if currentcontainers != '':
             break
+    logMenu()
+
 
 def pullImages(): ## Further Example
     signal_Send = "pullImages"  # We store what we want to send to the server here
@@ -38,10 +37,15 @@ def pullImages(): ## Further Example
     s.send(sigSent)  # then we send it using s.send
     while True: # we then start a listener
         pulledimages = s.recv(2048) # and wait for a message from the server
-        printimages = pulledimages.decode() # we then turn it back into a string
+        printimages = pulledimages.decode()  # we then turn it back into a string
         print(printimages) # and print it
         if pulledimages != '':  # this just checks to see if we got anything, once the server responds the loop breaks
             break
+
+
+def createcontainer():
+    print("Create Container")
+
 
 def runningContainers(): ## Further Example
     signal_Send = "Show Running Containers"
@@ -57,11 +61,20 @@ def runningContainers(): ## Further Example
 
 
 def reverseshell():  # Launches our Reverse Shell
-    signal_Send = "Reverse Shell"
-    sigSent = signal_Send.encode()
-    s.send(sigSent)
-    # os.system("start cmd /k /reverseshell/reverseClient.py")
-    subprocess.run(["python", "reverseshell/reverseServer.py"])
+    userwarning = messagebox.askyesnocancel("Confirmation", "The Main Menu will freeze while using the Remote Shell"
+                                            "\nType Exit to return to the Main Menu"
+                                            "\nLaunch the Remote Shell?")
+    print(userwarning)
+    if userwarning is True:
+        signal_Send = "Reverse Shell"
+        sigSent = signal_Send.encode()
+        s.send(sigSent)
+        # os.system("start cmd /k /reverseshell/reverseClient.py")
+        subprocess.run(["python", "reverseshell/reverseServer.py"])
+    elif userwarning is False:
+        print("Reverting to Main Menu")
+    elif userwarning is None:
+        print("No Input Detected")
 
 
 def disconnect():
@@ -102,6 +115,23 @@ def menu2Grab():
     print(CLIENT_PIN)
     winpin.destroy()
 
+def logMenuGrab():
+    global loggrab
+    loggrab = entryLog.get()
+    print(loggrab)
+    winlog.destroy()
+    signal_Send = (loggrab)
+    sigSent = signal_Send.encode()
+    s.send(sigSent)
+    logsreturned = s.recv(4096)
+    print(logsreturned)
+
+def logquit():
+    signal_Send = "Cancel"
+    sigSent = signal_Send.encode()
+    s.send(sigSent)
+    winlog.destroy()
+
 def debugMain():  # This is how we skip to the main menu for debug, does not connect to the server
     win.destroy()
     mainMenu()
@@ -127,11 +157,11 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
     # Left Row
     Button(win2, bg='#ca891d', activebackground='gray25', text='Pull / Update Images', command=pullImages).grid(row=1, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='See Current Containers', command=runningContainers).grid(row=2, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Create Containers', command=create ).grid(row=3, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='button3', ).grid(row=3, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button4', ).grid(row=4, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button5', ).grid(row=6, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button6', ).grid(row=7, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button7', command=button7 ).grid(row=8, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Get Container Logs', command=logcontainers).grid(row=8, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button8', ).grid(row=9, column=1, pady=0)
     exitButton = Button(win2, bg='#ca891d', activebackground='gray25', text='Exit', command=quit)  # This allows us to reference a button later
     # Right Row
@@ -155,6 +185,7 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
     # clientInput = entryBox.get() #This is how we'll grab from the entry box later
 
     mainloop()
+
 
 def pinMenu():
     global entryPIN
@@ -180,6 +211,32 @@ def pinMenu():
     Button(winpin, bg='#ca891d', activebackground='gray25', text='Exit', command=winpin.quit).grid(row=13, column=7, pady=0)
     winpin.bind('<Return>', lambda e, w=winpin: menu2Grab())
     winpin.mainloop()
+
+
+def logMenu():
+    global entryLog
+    global winlog
+    winlog = Tk()
+    winlog.title("B33Hive: Input a Container")
+    # win.geometry("640x480")
+    winlog.resizable(True, True)
+    winlog.configure(bg='#010204')
+    # Loads an Image
+    #Logo = Image.open("B33Hive.png")
+    #photo = ImageTk.PhotoImage(Logo)
+    # This sets our icon
+    #winlog.wm_iconphoto(False, photo)
+    # Labels
+    Label(winlog, bg='black', fg='white', text='What Container Do You Want the Logs From?').grid(row=7, column=8)
+    entryLog = Entry(winlog, width=6, bg="gray25", fg='#ca891d')
+    entryLog.grid(row=12, column=8)
+    Label(winlog, bg='black', fg='white', text='Container:').grid(row=12, column=7)
+    # Buttons
+    Button(winlog, bg='#ca891d', activebackground='gray25', text='Enter', command=logMenuGrab).grid(row=13, column=9, pady=0)
+    Button(winlog, bg='#ca891d', activebackground='gray25', text='Exit', command=logquit).grid(row=13, column=7, pady=0)
+    winlog.mainloop()
+
+
 
 
 win = Tk()

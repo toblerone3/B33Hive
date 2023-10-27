@@ -5,11 +5,10 @@ import os
 import subprocess
 import random
 import string
-import datetime
 import sys
 from pathlib import Path
 
-dockerDebug = input("Launch with Docker? [Y/N] (DEBUG, REMOVE BEFORE HAND IN)")
+dockerDebug = input("Launch with Docker? [Y/N] (DEBUG, REMOVE BEFORE HAND IN):")
 while dockerDebug.lower() not in ('y', 'n'):
     dockerDebug = input("Please Enter Only a Y or an N Character: ")
 if dockerDebug.lower() == 'n':
@@ -62,39 +61,32 @@ def create():
 
     print("\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP\n")
 
-    randomsuffix = randomword(8)
-    kipponame = "kippo-" + randomsuffix
+    kipponame = "kippo-" + randomword(8)
     sqlname = "sql-" + kipponame
     graphname = "graph-" + kipponame
-    currenttime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-    client.containers.create(name=kipponame, links={sqlname: 'mysql:5.6'}, image="dariusbakunas/kippo", environment=["KIPPO_DB_PASSWORD=K[5UZ4ELSf;e)gX=, KIPPO_SRV_NAME=Barry-Bs-Workstation"])
-    print(kipponame + " container created")
+    client.configs.create(name=kipponame, links={sqlname: 'mysql'}, KIPPO_DB_PASSWORD="K[5UZ4ELSf;e)gX=", KIPPO_SRV_NAME="Barry B's Workstation", image="dariusbakunas/kippo")
     client.containers.create(name=sqlname, environment=["MYSQL_ROOT_PASSWORD=K[5UZ4ELSf;e)gX="], image='mysql:5.6')
-    print(sqlname + "container created")
-    client.containers.create(name=graphname, links={sqlname: 'mysql:5.6'},image="dariusbakunas/kippo-graph")
-    print(graphname + "container created")
-
-    confirmationmessage = print("kippo container and dependencies made with the suffix: " + randomsuffix + "created at: " + currenttime)
-
-    runningContainers = confirmationmessage
-    returnSig = runningContainers.encode()
-    client_socket.send(returnSig)
-
+    client.containers.create(name=graphname, links={sqlname: 'mysql'},image="dariusbakunas/kippo-graph")
 
 
 def checkimage():
-    print("pulling images\n")
-    client.images.pull('dariusbakunas/kippo')  # medium interaction SSH honeypot
-    print("kippo pulled...")
-    client.images.pull('mysql')  # dependency for kippo - data storage
-    print("mySQL pulled...")
-    client.images.pull('dariusbakunas/kippo-graph')  # dependency for kippo - analysing kippo data
-    print("kippo-graph pulled...")
+    imageflag = Path("./flag")
+    if imageflag.is_file():
+        print("\nimages already pulled, proceeding\n")
+        print("the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
 
-    print("\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
-    listen_for_client()
+    else:
+        print("pulling images\n")
+        open("flag", "w")
+        client.images.pull('dariusbakunas/kippo')  # medium interaction SSH honeypot
+        print("kippo pulled...")
+        client.images.pull('mysql')  # dependency for kippo - data storage
+        print("mySQL pulled...")
+        client.images.pull('dariusbakunas/kippo-graph')  # dependency for kippo - analysing kippo data
+        print("kippo-graph pulled...")
 
+        print("\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
 
 
 while True:
@@ -122,7 +114,6 @@ s.bind((SERVER_HOST, SERVER_PORT))
 s.listen(5)
 print(f"[*] Listening as {SERVER_HOST}:{SERVER_PORT}")
 
-#
 
 def listen_for_client(cs):
     """
@@ -134,9 +125,6 @@ def listen_for_client(cs):
             # keep listening for a message from cs socket
             msg = cs.recv(1024).decode()
             print(msg)
-            if msg == "CreateContainer":
-                create()
-
             if msg == "StartContainer":
                 print("listing all containers")
                 runningContainers = str(client.containers.list(all=True))
@@ -156,8 +144,25 @@ def listen_for_client(cs):
                     client_socket.send(returnSig)
                 else:
                     checkimage()
-            if msg == "Button 7":
-                print("Button 7 Okay")
+            if msg == "Get Container Logs":
+                print("Getting Containers")
+                # Sends Container List
+                containerList = str(client.containers.list(all=True))
+                returnSig = containerList.encode()
+                client_socket.send(returnSig)
+                # Waits for Response from Client
+                logname = cs.recv(1024).decode()
+                if logname == "Cancel":
+                    listen_for_client(cs)
+                else:
+                    print(logname)
+                    print("Check 1")
+                    containerlogs = client.containers.get(logname)
+                    print("Check 2")
+                    print(containerlogs.logs())
+                    logstosend = str(containerlogs.logs())
+                    returnLogs = logstosend.encode()
+                    client_socket.send(returnLogs)
             if msg == "Reverse Shell":
                 print("Starting Shell")
                 reverseshell()
@@ -169,15 +174,14 @@ def listen_for_client(cs):
             if msg == "Disconnect":
                 print("Client Disconnecting")
                 break
-
-
+            if msg == "create container":
+                print("Create Container")
             msg = ""
         except Exception as e:
             # client no longer connected
             # remove it from the set
             print(f"[!] Error: {e}")
             client_sockets.remove(cs)
-
 
 
 while True:
