@@ -39,7 +39,26 @@ def pullImages(): ## Further Example
 
 
 def createcontainer():
-    print("Create Container")
+    signal_Send = "create containers"
+    sigSent = signal_Send.encode()
+    s.send(sigSent)
+    while True:
+        createoutput = s.recv(2048)  # and wait for a message from the server
+        createoutput = createoutput.decode()  # we then turn it back into a string
+        print(createoutput)  # and print it
+        if createoutput != '':  # this just checks to see if we got anything, once the server responds the loop breaks
+            break
+
+def destroycontainer():
+    signal_Send = "create containers"
+    sigSent = signal_Send.encode()
+    s.send(sigSent)
+    while True:
+        destroyoutput = s.recv(2048)  # and wait for a message from the server
+        destroyoutput = destroyoutput.decode()  # we then turn it back into a string
+        print(destroyoutput)  # and print it
+        if destroyoutput != '':  # this just checks to see if we got anything, once the server responds the loop breaks
+            break
 
 
 def runningContainers(): ## Further Example
@@ -165,8 +184,8 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
     Button(win2, bg='#ca891d', activebackground='gray25', text='button8', ).grid(row=9, column=1, pady=0)
     exitButton = Button(win2, bg='#ca891d', activebackground='gray25', text='Exit', command=quit)  # This allows us to reference a button later
     # Right Row
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button9', ).grid(row=1, column=3, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button10', ).grid(row=2, column=3, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='create containers', command=createcontainer).grid(row=1, column=3, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='destroy containers', command=destroycontainer).grid(row=2, column=3, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button11', ).grid(row=3, column=3, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button12', ).grid(row=4, column=3, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button13', ).grid(row=6, column=3, pady=0)

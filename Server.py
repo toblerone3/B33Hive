@@ -70,6 +70,8 @@ def create():
     client.containers.create(name=sqlname, environment=["MYSQL_ROOT_PASSWORD=K[5UZ4ELSf;e)gX="], image='mysql:5.6')
     client.containers.create(name=graphname, links={sqlname: 'mysql'},image="dariusbakunas/kippo-graph")
 
+    print("\nthe created containers are: " + kipponame + sqlname + graphname)
+
 def destroy():
     try:
         destroyname = str(input("enter the random suffix of the group of containers you wish to destroy: "))
@@ -191,9 +193,9 @@ def listen_for_client(cs):
             if msg == "Disconnect":
                 print("Client Disconnecting")
                 break
-            if msg == "create container":
+            if msg == "create containers":
                 create()
-            if msg == "destroy container":
+            if msg == "destroy containers":
                 destroy()
 
         except Exception as e:
