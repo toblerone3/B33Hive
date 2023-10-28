@@ -66,8 +66,10 @@ def create():
     sqlname = "sql-" + kipponame
     graphname = "graph-" + kipponame
 
-    client.configs.create(name=kipponame, links={sqlname: 'mysql'}, KIPPO_DB_PASSWORD="K[5UZ4ELSf;e)gX=", KIPPO_SRV_NAME="Barry B's Workstation", image="dariusbakunas/kippo")
-    client.containers.create(name=sqlname, environment=["MYSQL_ROOT_PASSWORD=K[5UZ4ELSf;e)gX="], image='mysql:5.6')
+
+    #environment=["links={sqlname: 'mysql'}, KIPPO_DB_PASSWORD=K[5UZ4ELSf;e)gX=, KIPPO_SRV_NAME=Barry B's Workstation"]
+    client.containers.create(name=kipponame, environment=["links={sqlname: 'mysql'}, KIPPO_DB_PASSWORD=K[5UZ4ELSf;e)gX=, KIPPO_SRV_NAME=Barry B's Workstation"], image="dariusbakunas/kippo")
+    client.containers.create(name=sqlname, environment=["MYSQL_ROOT_PASSWORD=K[5UZ4ELSf;e)gX="], image='mysql')
     client.containers.create(name=graphname, links={sqlname: 'mysql'},image="dariusbakunas/kippo-graph")
 
     print("\nthe created containers are: " + kipponame + sqlname + graphname)
