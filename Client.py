@@ -7,6 +7,7 @@ from tkinter import *
 from tkinter import messagebox  # Weirdly, despite importing tkinter *, we still need this
 from PIL import ImageTk, Image
 from idlelib.tooltip import Hovertip
+import re
 
 
 whichOS = platform.system()
@@ -119,7 +120,11 @@ def logMenuGrab():
     s.send(sigSent)
     logsreturned = s.recv(4096)
     logsstring = str(logsreturned)
-    print(logsstring[4:])
+    logwrap = '\n'.join(re.findall('.{1,128}', logsstring))
+    f = open("%sContainerLogs.txt" %loggrab, "w")
+    f.write(logwrap)
+    print(logsstring[4:]) # DEBUG ONLY
+
 
 def logquit():
     signal_Send = "Cancel"
