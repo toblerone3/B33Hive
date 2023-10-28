@@ -7,6 +7,7 @@ from tkinter import *
 from tkinter import messagebox  # Weirdly, despite importing tkinter *, we still need this
 from PIL import ImageTk, Image
 from idlelib.tooltip import Hovertip
+import re
 
 
 whichOS = platform.system()
@@ -18,16 +19,10 @@ PIN = ''
 
 
 def logcontainers(): ## THIS IS HOW WE SEND TO THE SERVER, THIS CAN BE REPEATED AD-NAUSEAM
+    runningContainers()
     signal_Send = "Get Container Logs"
     sigSent = signal_Send.encode()
     s.send(sigSent)
-    while True:
-        currentcontainers = s.recv(2048)
-        printcontainers = currentcontainers.decode()
-        print("Current Containers:")
-        print(printcontainers)#[1:][:-1]
-        if currentcontainers != '':
-            break
     logMenu()
 
 
@@ -124,7 +119,12 @@ def logMenuGrab():
     sigSent = signal_Send.encode()
     s.send(sigSent)
     logsreturned = s.recv(4096)
-    print(logsreturned)
+    logsstring = str(logsreturned)
+    logwrap = '\n'.join(re.findall('.{1,128}', logsstring))
+    f = open("%sContainerLogs.txt" %loggrab, "w")
+    f.write(logwrap)
+    print(logsstring[4:]) # DEBUG ONLY
+
 
 def logquit():
     signal_Send = "Cancel"
@@ -323,5 +323,4 @@ while True:
             disconnect()
 
 
-
-
+s.close()
