@@ -70,6 +70,26 @@ def create():
     client.containers.create(name=sqlname, environment=["MYSQL_ROOT_PASSWORD=K[5UZ4ELSf;e)gX="], image='mysql:5.6')
     client.containers.create(name=graphname, links={sqlname: 'mysql'},image="dariusbakunas/kippo-graph")
 
+def destroy():
+    try:
+        destroyname = str(input("enter the random suffix of the group of containers you wish to destroy: "))
+
+        destroykippo = "kippo-" + destroyname
+        destroysql = "sql-" + destroykippo
+        destroygraph = "graph-" + destroykippo
+
+        client.containers.remove(name=destroykippo,v=True, force=True)
+        print("deleted kippo container with name: " + destroykippo)
+        client.containers.remove(name=destroysql, v=True, force=True)
+        print("deleted kippo container with name: " + destroykippo)
+        client.containers.remove(name=destroygraph, v=True, force=True)
+        print("deleted kippo container with name: " + destroygraph)
+
+
+    except:
+        input("\nsuffix not known or incorrectly typed, trying again\n")
+
+
 
 def checkimage():
     imageflag = Path("./flag")
@@ -172,8 +192,10 @@ def listen_for_client(cs):
                 print("Client Disconnecting")
                 break
             if msg == "create container":
-                print("Create Container")
-            msg = ""
+                create()
+            if msg == "destroy container":
+                destroy()
+
         except Exception as e:
             # client no longer connected
             # remove it from the set
