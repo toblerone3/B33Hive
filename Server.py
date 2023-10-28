@@ -57,6 +57,7 @@ def randomword(length): # user for human readable names, for naming containers. 
     letters = string.ascii_lowercase
     return ''.join(random.choice(letters) for i in range(length))
 
+
 def create():
 
     print("\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP\n")
@@ -118,7 +119,7 @@ print(f"[*] Listening as {SERVER_HOST}:{SERVER_PORT}")
 def listen_for_client(cs):
     """
     This function keep listening for a message from cs socket
-    Whenever a message is received, broadcast it to all other connected clients
+    Whenever a message is received, Follows the IF Statement Chain
     """
     while True:
         try:
@@ -145,15 +146,11 @@ def listen_for_client(cs):
                 else:
                     checkimage()
             if msg == "Get Container Logs":
-                print("Getting Containers")
-                # Sends Container List
-                containerList = str(client.containers.list(all=True))
-                returnSig = containerList.encode()
-                client_socket.send(returnSig)
-                # Waits for Response from Client
+                print("Getting Container Logs")
                 logname = cs.recv(1024).decode()
                 if logname == "Cancel":
                     listen_for_client(cs)
+                    break
                 else:
                     print(logname)
                     print("Check 1")

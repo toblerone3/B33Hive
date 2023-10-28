@@ -18,16 +18,10 @@ PIN = ''
 
 
 def logcontainers(): ## THIS IS HOW WE SEND TO THE SERVER, THIS CAN BE REPEATED AD-NAUSEAM
+    runningContainers()
     signal_Send = "Get Container Logs"
     sigSent = signal_Send.encode()
     s.send(sigSent)
-    while True:
-        currentcontainers = s.recv(2048)
-        printcontainers = currentcontainers.decode()
-        print("Current Containers:")
-        print(printcontainers)#[1:][:-1]
-        if currentcontainers != '':
-            break
     logMenu()
 
 
@@ -124,7 +118,8 @@ def logMenuGrab():
     sigSent = signal_Send.encode()
     s.send(sigSent)
     logsreturned = s.recv(4096)
-    print(logsreturned)
+    logsstring = str(logsreturned)
+    print(logsstring[4:])
 
 def logquit():
     signal_Send = "Cancel"
@@ -323,5 +318,4 @@ while True:
             disconnect()
 
 
-
-
+s.close()
