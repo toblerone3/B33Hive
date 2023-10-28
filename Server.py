@@ -72,7 +72,12 @@ def create():
     client.containers.create(name=sqlname, environment=["MYSQL_ROOT_PASSWORD=K[5UZ4ELSf;e)gX="], image='mysql')
     client.containers.create(name=graphname, links={sqlname: 'mysql'},image="dariusbakunas/kippo-graph")
 
-    print("\nthe created containers are: " + kipponame + sqlname + graphname)
+    created = "\nthe created containers are: " + kipponame + '' + sqlname + '' + graphname
+
+    print(created)
+    returnStr = created
+    returnSig = returnStr.encode()
+    client_socket.send(returnSig)
 
 def destroy():
     try:
@@ -88,6 +93,10 @@ def destroy():
         print("deleted kippo container with name: " + destroykippo)
         client.containers.remove(name=destroygraph, v=True, force=True)
         print("deleted kippo container with name: " + destroygraph)
+
+        returnStr = "deleted kippo container with names: " + destroykippo + "" + destroysql + "" + destroygraph
+        returnSig = returnStr.encode()
+        client_socket.send(returnSig)
 
 
     except:
@@ -112,6 +121,8 @@ def checkimage():
         print("kippo-graph pulled...")
 
         print("\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+
+
 
 
 while True:
