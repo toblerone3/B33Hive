@@ -17,6 +17,24 @@ Attempts = 0
 
 PIN = ''
 
+# ---------------------------------------------- DISCONNECTIONS AND DEBUG ----------------------------------------------
+
+
+def disconnect():
+    print("Disconnecting...")
+    signal_Send = "Disconnect"
+    sigSent = signal_Send.encode()
+    s.send(sigSent)
+    s.close()
+    quit()
+
+
+def debugMain():  # This is how we skip to the main menu for debug, does not connect to the server
+    win.destroy()
+    mainMenu()
+
+
+# --------------------------------------------------- LOG RETRIEVAL ----------------------------------------------------
 
 def logcontainers(): ## THIS IS HOW WE SEND TO THE SERVER, THIS CAN BE REPEATED AD-NAUSEAM
     runningContainers()
@@ -24,6 +42,31 @@ def logcontainers(): ## THIS IS HOW WE SEND TO THE SERVER, THIS CAN BE REPEATED 
     sigSent = signal_Send.encode()
     s.send(sigSent)
     logMenu()
+
+
+def logMenuGrab():
+    global loggrab
+    loggrab = entryLog.get()
+    print(loggrab)
+    winlog.destroy()
+    signal_Send = loggrab
+    sigSent = signal_Send.encode()
+    s.send(sigSent)
+    logsreturned = s.recv(4096)
+    logsstring = str(logsreturned)
+    logwrap = '\n'.join(re.findall('.{1,128}', logsstring))
+    f = open("%sContainerLogs.txt" %loggrab, "w")
+    f.write(logwrap)
+    print(logsstring[4:]) # DEBUG ONLY
+
+
+def logquit():
+    signal_Send = "Cancel"
+    sigSent = signal_Send.encode()
+    s.send(sigSent)
+    winlog.destroy()
+
+# ------------------------------------------------------- DOCKER -------------------------------------------------------
 
 
 def pullImages(): ## Further Example
@@ -48,6 +91,7 @@ def createcontainer():
         print(createoutput)  # and print it
         if createoutput != '':  # this just checks to see if we got anything, once the server responds the loop breaks
             break
+
 
 def destroycontainer():
     signal_Send = "create containers"
@@ -90,14 +134,7 @@ def reverseshell():  # Launches our Reverse Shell
     elif userwarning is None:
         print("No Input Detected")
 
-
-def disconnect():
-    print("Disconnecting...")
-    signal_Send = "Disconnect"
-    sigSent = signal_Send.encode()
-    s.send(sigSent)
-    s.close()
-    quit()
+# ------------------------------------------------- ENTRY BOX GRABBERS -------------------------------------------------
 
 
 def show_data():
@@ -129,31 +166,8 @@ def menu2Grab():
     print(CLIENT_PIN)
     winpin.destroy()
 
-def logMenuGrab():
-    global loggrab
-    loggrab = entryLog.get()
-    print(loggrab)
-    winlog.destroy()
-    signal_Send = (loggrab)
-    sigSent = signal_Send.encode()
-    s.send(sigSent)
-    logsreturned = s.recv(4096)
-    logsstring = str(logsreturned)
-    logwrap = '\n'.join(re.findall('.{1,128}', logsstring))
-    f = open("%sContainerLogs.txt" %loggrab, "w")
-    f.write(logwrap)
-    print(logsstring[4:]) # DEBUG ONLY
 
-
-def logquit():
-    signal_Send = "Cancel"
-    sigSent = signal_Send.encode()
-    s.send(sigSent)
-    winlog.destroy()
-
-def debugMain():  # This is how we skip to the main menu for debug, does not connect to the server
-    win.destroy()
-    mainMenu()
+# ------------------------------------------------------- MENU'S -------------------------------------------------------
 
 
 def mainMenu():  # This is our main menu, functionalized, so we can debug and call later
@@ -298,6 +312,8 @@ Button(win, bg='#ca891d', activebackground='gray25', text='Debug Main', command=
 
 mainloop()  # End of First Tkinter Window
 
+
+# ------------------------------------------------------ NETWORK -------------------------------------------------------
 # server's IP address
 # if the server is not on this machine,
 # put the private (network) IP address (e.g 192.168.1.2)
@@ -320,8 +336,7 @@ recvPIN = s.recv(4096)
 SERVER_PIN = recvPIN.decode('utf-8')
 
 
-# print("Variable: SERVER_PIN:", SERVER_PIN,"Variable recvPIN:", recvPIN) # (debug option for PINS)
-
+# -------------------------------------------------------- PIN ---------------------------------------------------------
 totalAttempts = 3
 while True:
     if SERVER_PIN == '8888': ##8888 is the default pin, if the server doesn't have a pin, it will be automatically set to 8888, so we're checking if we can skip
