@@ -3,10 +3,13 @@ import tkinter
 import subprocess
 import os
 import platform
+import rsa
+import time
 from tkinter import *
 from tkinter import messagebox  # Weirdly, despite importing tkinter *, we still need this
 from PIL import ImageTk, Image
 from idlelib.tooltip import Hovertip
+from pathlib import Path
 import re
 
 
@@ -16,6 +19,51 @@ print("Launching",whichOS, "B33Hive Client") ##Just a debug, we need this logic 
 Attempts = 0
 
 PIN = ''
+
+# --------------------------------------------------- RSA GENERATION ---------------------------------------------------
+
+rsaflag = Path("RSA/rsaflag")
+if rsaflag.is_file():
+    print("\nRSA Keys Already Generated\n")
+else:
+    print("Generating new RSA Keys...")
+    open("RSA/rsaflag", "w")
+    # generate RSA key pair
+    public_key, private_key = rsa.newkeys(2048)
+    # save key pair to files
+    with open('RSA/clientpublic.pem', 'wb') as f:
+        f.write(public_key.save_pkcs1())
+    with open('RSA/clientprivate.pem', 'wb') as f:
+        f.write(private_key.save_pkcs1())
+    print('RSA PGP key pair generated successfully')
+
+# Loads Public Key into memory
+f_pub = open("RSA/clientpublic.pem", 'rb')
+publicdata = f_pub.read()
+public_key = rsa.PublicKey.load_pkcs1(publicdata, 'PEM')
+f_pub.close()
+# Loads Private Key into Memory
+f_private = open("RSA/clientprivate.pem", 'rb')
+privatedata = f_private.read()
+private_key = rsa.PrivateKey.load_pkcs1(privatedata, 'PEM')
+f_private.close()
+
+print("Keys Loaded")
+
+
+def pinexchange(): ## Further Example
+    print("Beginning Key Exchange")
+    signal_Send = "Begin Key Exchange"
+    sigSent = signal_Send.encode()
+    s.send(sigSent)
+    time.sleep(0.5)
+    s.send(public_key.save_pkcs1("PEM"))  # then we send it using s.send
+    encPIN = s.recv(3096)
+    decPIN = rsa.decrypt(encPIN, private_key)
+    str(decPIN)
+    print(encPIN)
+    print(decPIN)
+
 
 # ---------------------------------------------- DISCONNECTIONS AND DEBUG ----------------------------------------------
 
@@ -165,6 +213,7 @@ def menu2Grab():
     CLIENT_PIN = entryPIN.get()
     print(CLIENT_PIN)
     winpin.destroy()
+    #pinexchange()
 
 
 # ------------------------------------------------------- MENU'S -------------------------------------------------------
@@ -331,11 +380,10 @@ SERVER_PORT = int(SERVER_PORT)
 # connect to the server
 s.connect((SERVER_HOST, SERVER_PORT))  # From this point on, we're talking to the server
 
-
 recvPIN = s.recv(4096)
 SERVER_PIN = recvPIN.decode('utf-8')
 
-
+pinexchange()
 # -------------------------------------------------------- PIN ---------------------------------------------------------
 totalAttempts = 3
 while True:

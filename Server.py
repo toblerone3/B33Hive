@@ -6,6 +6,7 @@ import subprocess
 import random
 import string
 import sys
+import rsa
 from pathlib import Path
 
 dockerDebug = input("Launch with Docker? [Y/N] (DEBUG, REMOVE BEFORE HAND IN):")
@@ -15,6 +16,34 @@ if dockerDebug.lower() == 'n':
     print("Alright, just don't forget, Dockers not gonna work")
 if dockerDebug.lower() == 'y':
     client = docker.from_env()
+
+genKeys = input("Generate new RSA Keys? (Recommended after Installation)[Y/N]:")
+while genKeys.lower() not in ('y', 'n'):
+    genKeys = input("Please Enter Only a Y or an N Character: ")
+if genKeys.lower() == 'n':
+    print("Continuing...")
+if genKeys.lower() == 'y':
+    print("Generating new RSA Keys...")
+    # generate RSA key pair
+    public_key, private_key = rsa.newkeys(2048)
+    # save key pair to files
+    with open('RSA/serverpublic.pem', 'wb') as f:
+        f.write(public_key.save_pkcs1())
+    with open('RSA/serverprivate.pem', 'wb') as f:
+        f.write(private_key.save_pkcs1())
+
+    print('RSA PGP key pair generated successfully')
+
+# Loads Public Key into memory
+f_pub = open("RSA/serverpublic.pem", 'rb')
+public_key = f_pub.read()
+f_pub.close()
+# Loads Private Key into Memory
+f_private = open("RSA/serverprivate.pem", 'rb')
+private_key = f_private.read()
+f_private.close()
+
+print("Keys Loaded")
 
 # Line 21 commented out, replace lines 11-18 with this one liner before hand in, this is for ease of use
 # client = docker.from_env()  # detects the docker installation and assigns this to a variable
@@ -48,6 +77,8 @@ if PIN_ASK.lower() == 'y':
 Attempts = 0
 
 
+
+
 def reverseshell():  # This Function Launches our Reverse Shell
     subprocess.run(["python", "reverseshell/reverseClient.py"])
     print("Shell Running")
@@ -78,6 +109,7 @@ def create():
     returnStr = created
     returnSig = returnStr.encode()
     client_socket.send(returnSig)
+
 
 def destroy():
     try:
@@ -161,6 +193,11 @@ def listen_for_client(cs):
             # keep listening for a message from cs socket
             msg = cs.recv(1024).decode()
             print(msg)
+            if msg == "Begin Key Exchange":
+                cpub = rsa.PublicKey.load_pkcs1(cs.recv(2048))
+                print(cpub)
+                encmsg = "Test".encode('utf8')
+                client_socket.send(rsa.encrypt(encmsg, cpub))
             if msg == "StartContainer":
                 print("listing all containers")
                 runningContainers = str(client.containers.list(all=True))
@@ -231,6 +268,11 @@ while True:
     t.daemon = True
     # start the thread
     t.start()
+
+
+    #client_public = s.recv(2048)
+    #enc_PIN = rsa.encrypt(SERVER_PIN, client_public)
+
     sentPIN = SERVER_PIN.encode()
     client_socket.send(sentPIN)  # NSend the pin to the client - IMPORTANT, ENCRYPT THIS LATER
 
