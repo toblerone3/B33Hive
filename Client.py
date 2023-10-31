@@ -13,6 +13,7 @@ from pathlib import Path
 import re
 
 
+
 whichOS = platform.system()
 print("Launching",whichOS, "B33Hive Client") ##Just a debug, we need this logic later
 
@@ -52,6 +53,7 @@ print("Keys Loaded")
 
 
 def pinexchange(): ## Further Example
+    global SERVER_PIN
     print("Beginning Key Exchange")
     signal_Send = "Begin Key Exchange"
     sigSent = signal_Send.encode()
@@ -59,11 +61,9 @@ def pinexchange(): ## Further Example
     time.sleep(0.5)
     s.send(public_key.save_pkcs1("PEM"))  # then we send it using s.send
     encPIN = s.recv(3096)
-    decPIN = rsa.decrypt(encPIN, private_key)
-    str(decPIN)
-    print(encPIN)
-    print(decPIN)
-
+    decPIN = rsa.decrypt(encPIN, private_key).decode()
+    print(decPIN, '# DEBUG')
+    SERVER_PIN = str(decPIN)
 
 # ---------------------------------------------- DISCONNECTIONS AND DEBUG ----------------------------------------------
 
@@ -380,10 +380,8 @@ SERVER_PORT = int(SERVER_PORT)
 # connect to the server
 s.connect((SERVER_HOST, SERVER_PORT))  # From this point on, we're talking to the server
 
-recvPIN = s.recv(4096)
-SERVER_PIN = recvPIN.decode('utf-8')
-
 pinexchange()
+
 # -------------------------------------------------------- PIN ---------------------------------------------------------
 totalAttempts = 3
 while True:

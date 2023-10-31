@@ -196,7 +196,7 @@ def listen_for_client(cs):
             if msg == "Begin Key Exchange":
                 cpub = rsa.PublicKey.load_pkcs1(cs.recv(2048))
                 print(cpub)
-                encmsg = "Test".encode('utf8')
+                encmsg = SERVER_PIN.encode('UTF-8')
                 client_socket.send(rsa.encrypt(encmsg, cpub))
             if msg == "StartContainer":
                 print("listing all containers")
@@ -273,8 +273,8 @@ while True:
     #client_public = s.recv(2048)
     #enc_PIN = rsa.encrypt(SERVER_PIN, client_public)
 
-    sentPIN = SERVER_PIN.encode()
-    client_socket.send(sentPIN)  # NSend the pin to the client - IMPORTANT, ENCRYPT THIS LATER
+
+# NSend the pin to the client - IMPORTANT, ENCRYPT THIS LATER
 
 # close client sockets
 for cs in client_sockets:
