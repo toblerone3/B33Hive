@@ -5,13 +5,17 @@ import os
 import platform
 import rsa
 import time
+import re
 from tkinter import *
 from tkinter import messagebox  # Weirdly, despite importing tkinter *, we still need this
+from cryptography.fernet import Fernet
 from PIL import ImageTk, Image
 from idlelib.tooltip import Hovertip
 from pathlib import Path
-import re
 
+
+key = Fernet.generate_key()
+Fern = Fernet(key)
 
 
 whichOS = platform.system()
@@ -54,6 +58,8 @@ print("Keys Loaded")
 
 def pinexchange(): ## Further Example
     global SERVER_PIN
+    global key
+    global Fern
     print("Beginning Key Exchange")
     signal_Send = "Begin Key Exchange"
     sigSent = signal_Send.encode()
@@ -64,6 +70,11 @@ def pinexchange(): ## Further Example
     decPIN = rsa.decrypt(encPIN, private_key).decode()
     print(decPIN, '# DEBUG')
     SERVER_PIN = str(decPIN)
+    key = s.recv(1024)
+    key = rsa.decrypt(key, private_key).decode()
+    Fern = Fernet(key)
+    print(Fern)
+
 
 # ---------------------------------------------- DISCONNECTIONS AND DEBUG ----------------------------------------------
 
@@ -159,7 +170,8 @@ def runningContainers(): ## Further Example
     s.send(sigSent)
     while True:
         currentcontainers = s.recv(2048)
-        printcontainers = currentcontainers.decode()
+        enccontainers = currentcontainers.decode()
+        printcontainers = Fern.decrypt(enccontainers)
         print("Current Containers:")
         print(printcontainers)#[1:][:-1]
         if currentcontainers != '':

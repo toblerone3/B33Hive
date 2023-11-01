@@ -1,4 +1,5 @@
 import socket
+import time
 from threading import Thread
 import docker
 import os
@@ -8,6 +9,12 @@ import string
 import sys
 import rsa
 from pathlib import Path
+from cryptography.fernet import Fernet
+
+key = Fernet.generate_key()
+Fern = Fernet(key)
+
+
 
 dockerDebug = input("Launch with Docker? [Y/N] (DEBUG, REMOVE BEFORE HAND IN):")
 while dockerDebug.lower() not in ('y', 'n'):
@@ -198,6 +205,11 @@ def listen_for_client(cs):
                 print(cpub)
                 encmsg = SERVER_PIN.encode('UTF-8')
                 client_socket.send(rsa.encrypt(encmsg, cpub))
+                time.sleep(0.5)
+                client_socket.send(rsa.encrypt(key, cpub))
+
+
+
             if msg == "StartContainer":
                 print("listing all containers")
                 runningContainers = str(client.containers.list(all=True))
@@ -238,7 +250,7 @@ def listen_for_client(cs):
             if msg == "Show Running Containers":
                 print("Getting Containers")
                 runningContainers = str(client.containers.list(all=True))
-                returnSig = runningContainers.encode()
+                returnSig = Fern.encrypt(runningContainers.encode())
                 client_socket.send(returnSig)
             if msg == "Disconnect":
                 print("Client Disconnecting")
