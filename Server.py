@@ -83,8 +83,16 @@ if PIN_ASK.lower() == 'y':
 
 Attempts = 0
 
-
-
+def start():
+    print("Check 1")
+    client.containers.list(all=True)
+    print("Check 2")
+    print(start_name)
+    print("Check 3")
+    client.containers.run(start_name)
+    print("Check 4")
+    print("container status: " + client.name.status())
+    input("\nfinished, press enter...\n")
 
 def reverseshell():  # This Function Launches our Reverse Shell
     subprocess.run(["python", "reverseshell/reverseClient.py"])
@@ -191,6 +199,7 @@ print(f"[*] Listening as {SERVER_HOST}:{SERVER_PORT}")
 
 
 def listen_for_client(cs):
+    global start_name
     """
     This function keep listening for a message from cs socket
     Whenever a message is received, Follows the IF Statement Chain
@@ -208,17 +217,10 @@ def listen_for_client(cs):
                 time.sleep(0.5)
                 client_socket.send(rsa.encrypt(key, cpub))
 
-
-
-            if msg == "StartContainer":
-                print("listing all containers")
-                runningContainers = str(client.containers.list(all=True))
-                returnSig = runningContainers.encode()
-                client_socket.send(returnSig)
-                try:
-                    startname = str(input("Enter name or ID of non-running container "))
-                except:
-                    print("invalid input")
+            if msg == "start":
+                time.sleep(1)
+                start_name = client_socket.recv(1024).decode()
+                start()
 
             if msg == "pullImages":
                 imageflag = Path("./flag")
