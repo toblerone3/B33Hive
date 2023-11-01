@@ -119,23 +119,33 @@ def create():
 
 
 def destroy():
+    destroystatement = "please enter the suffix of the container group to delete: "
+    destroystatementencode = destroystatement.encode()
+    client_socket.send(destroystatementencode)
+    #time.sleep(1)
+    #destroyname = client_socket.recv(1024).decode()
+
+
     try:
-        destroyname = str(input("enter the random suffix of the group of containers you wish to destroy: "))
+        destroyname = client_socket.recv(1024).decode()
+        print(destroyname)
 
         destroykippo = "kippo-" + destroyname
         destroysql = "sql-" + destroykippo
         destroygraph = "graph-" + destroykippo
 
-        client.containers.remove(name=destroykippo,v=True, force=True)
         print("deleted kippo container with name: " + destroykippo)
+        client.containers.remove(name=destroykippo, v=True, force=True)
+
         client.containers.remove(name=destroysql, v=True, force=True)
         print("deleted kippo container with name: " + destroykippo)
         client.containers.remove(name=destroygraph, v=True, force=True)
         print("deleted kippo container with name: " + destroygraph)
 
-        returnStr = "deleted kippo container with names: " + destroykippo + "" + destroysql + "" + destroygraph
-        returnSig = returnStr.encode()
-        client_socket.send(returnSig)
+        destroyed = "deleted kippo container with names: " + destroykippo + "" + destroysql + "" + destroygraph
+
+        sigSent = destroyed.encode()
+        s.send(sigSent)
 
 
     except:
