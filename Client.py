@@ -1,17 +1,18 @@
-import platform
-import re
 import socket
-import subprocess
-import time
 import tkinter
-from idlelib.tooltip import Hovertip
-from pathlib import Path
+import subprocess
+import os
+import platform
+import rsa
+import time
+import re
 from tkinter import *
 from tkinter import messagebox  # Weirdly, despite importing tkinter *, we still need this
-
-import rsa
-from PIL import ImageTk, Image
 from cryptography.fernet import Fernet
+from PIL import ImageTk, Image
+from idlelib.tooltip import Hovertip
+from pathlib import Path
+
 
 key = Fernet.generate_key()
 Fern = Fernet(key)
@@ -110,14 +111,12 @@ def logMenuGrab():
     signal_Send = loggrab
     sigSent = signal_Send.encode()
     s.send(sigSent)
-    logsreturned = s.recv(11264)
-    enclogs = logsreturned.decode()
-    declogs = Fern.decrypt(enclogs)
-    strlogs = str(declogs)
-    logwrap = '\n'.join(re.findall('.{1,128}', strlogs))
-    f = open("%sContainerLogs.txt" % loggrab, "w")
+    logsreturned = s.recv(4096)
+    logsstring = str(logsreturned)
+    logwrap = '\n'.join(re.findall('.{1,128}', logsstring))
+    f = open("%sContainerLogs.txt" %loggrab, "w")
     f.write(logwrap)
-    print(declogs[4:]) # DEBUG ONLY
+    print(logsstring[4:]) # DEBUG ONLY
 
 
 def logquit():
