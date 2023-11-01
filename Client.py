@@ -13,10 +13,8 @@ from PIL import ImageTk, Image
 from idlelib.tooltip import Hovertip
 from pathlib import Path
 
-
 key = Fernet.generate_key()
 Fern = Fernet(key)
-
 
 whichOS = platform.system()
 print("Launching",whichOS, "B33Hive Client") ##Just a debug, we need this logic later
@@ -176,15 +174,24 @@ def createcontainer():
 
 
 def destroycontainer():
-    signal_Send = "create containers"
+    signal_Send = "destroy containers"
     sigSent = signal_Send.encode()
     s.send(sigSent)
     while True:
-        destroyoutput = s.recv(2048)  # and wait for a message from the server
-        destroyoutput = destroyoutput.decode()  # we then turn it back into a string
-        print(destroyoutput)  # and print it
-        if destroyoutput != '':  # this just checks to see if we got anything, once the server responds the loop breaks
-            break
+        destroystatement = s.recv(2048)  # and wait for a message from the server
+        destroystatement = destroystatement.decode()  # we then turn it back into a string
+        print(destroystatement)  # and print it
+
+        destroyresponse = str(input())
+        print(destroyresponse)
+        sigSent = destroyresponse.encode()
+        s.send(sigSent)
+
+        destroyres = s.recv(2048)
+        destroyresult = destroyres.decode()
+        print(destroyresult)
+
+        break
 
 
 def runningContainers(): ## Further Example
