@@ -242,7 +242,8 @@ def listen_for_client(cs):
                     print("Check 2")
                     print(containerlogs.logs())
                     logstosend = str(containerlogs.logs())
-                    returnLogs = logstosend.encode()
+                    returnLogs = Fern.encrypt(logstosend.encode())
+                    print(returnLogs)
                     client_socket.send(returnLogs)
             if msg == "Reverse Shell":
                 print("Starting Shell")
