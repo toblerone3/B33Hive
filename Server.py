@@ -161,23 +161,17 @@ def destroy():
 
 
 
-def checkimage():
-    imageflag = Path("./flag")
-    if imageflag.is_file():
-        print("\nimages already pulled, proceeding\n")
-        print("the default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
-
-    else:
+def checkimage(client):
+    while True:
         print("pulling images\n")
-        open("flag", "w")
         client.images.pull('dariusbakunas/kippo')  # medium interaction SSH honeypot
         print("kippo pulled...")
         client.images.pull('mysql')  # dependency for kippo - data storage
         print("mySQL pulled...")
         client.images.pull('dariusbakunas/kippo-graph')  # dependency for kippo - analysing kippo data
         print("kippo-graph pulled...")
-
         print("\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+        break
 
 
 
@@ -233,14 +227,10 @@ def listen_for_client(cs):
                 start()
 
             if msg == "pullImages":
-                imageflag = Path("./flag")
-                print("Pulling Current Images..")
-                if imageflag.is_file():
-                    returnStr = "Images Already Pulled"
-                    returnSig = returnStr.encode()
-                    client_socket.send(returnSig)
-                else:
-                    checkimage()
+                checkimage(client)
+
+
+
             if msg == "Get Container Logs":
                 print("Getting Container Logs")
                 logname = cs.recv(1024).decode()
