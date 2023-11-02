@@ -132,15 +132,20 @@ def logquit():
 
 
 def pullImages(): ## Further Example
-    signal_Send = "pullImages"  # We store what we want to send to the server here
-    sigSent = signal_Send.encode()  # Then we encode it into bytes
-    s.send(sigSent)  # then we send it using s.send
-    while True: # we then start a listener
-        pulledimages = s.recv(2048) # and wait for a message from the server
-        printimages = pulledimages.decode()  # we then turn it back into a string
-        print(printimages) # and print it
-        if pulledimages != '':  # this just checks to see if we got anything, once the server responds the loop breaks
-            break
+    hangwarning = messagebox.askyesnocancel("Confirmation", "This Menu will freeze while the server pulls"
+                                            " the images, are you sure you want to pull the images now?")
+    print(hangwarning)
+    if hangwarning is True:
+        signal_Send = "pullImages"  # We store what we want to send to the server here
+        sigSent = signal_Send.encode()  # Then we encode it into bytes
+        s.send(sigSent)  # then we send it using s.send
+        while True: # we then start a listener
+            pulledimages = s.recv(2048) # and wait for a message from the server
+            printimages = pulledimages.decode()  # we then turn it back into a string
+            print(printimages) # and print it
+            if pulledimages != '':  # this just checks to see if we got anything, once the server responds the loop breaks
+                break
+        messagebox.showinfo("Pulled Images", "Images were successfully pulled / updated")
 
 def startEntry():
     global startWin
@@ -215,8 +220,9 @@ def runningContainers(): ## Further Example
             break
 
 
+
 def reverseshell():  # Launches our Reverse Shell
-    userwarning = messagebox.askyesnocancel("Confirmation", "The Main Menu will freeze while using the Remote Shell"
+    userwarning = messagebox.askyesnocancel("Confirmation", "This Menu will freeze while using the Remote Shell"
                                             "\nType Exit to return to the Main Menu"
                                             "\nLaunch the Remote Shell?")
     print(userwarning)

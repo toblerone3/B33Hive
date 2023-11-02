@@ -171,7 +171,10 @@ def checkimage(client):
         client.images.pull('dariusbakunas/kippo-graph')  # dependency for kippo - analysing kippo data
         print("kippo-graph pulled...")
         print("\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
+        to_send = ("Pulled Kippo, Kippo-Graph and mySQL successfully").encode()
+        client_socket.send(to_send)
         break
+
 
 
 
