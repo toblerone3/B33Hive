@@ -142,6 +142,31 @@ def pullImages(): ## Further Example
         if pulledimages != '':  # this just checks to see if we got anything, once the server responds the loop breaks
             break
 
+def startEntry():
+    global startWin
+    global containerStart
+    startWin = Toplevel()
+    startWin.title("Enter container name")
+    startWin.resizable(True, True)
+    startWin.configure(bg='#010204')
+    containerStart = Entry(startWin, width=6, bg="gray25", fg='#ca891d')
+    containerStart.grid(row=12, column=8)
+    Label(startWin, bg='black', fg='white', text='Container name:').grid(row=12, column=7)
+    Button(startWin, bg='#ca891d', activebackground='gray25', text='Enter', command=start).grid(row=13, column=9, pady=0)
+    Button(startWin, bg='#ca891d', activebackground='gray25', text='Exit', command=startWin.quit).grid(row=13, column=7, pady=0)
+
+
+def start(): ## Further Example
+    global startGrab
+    startGrab = containerStart.get()
+    startWin.destroy()
+    signal_Send = "start"
+    startContainer_send = startGrab.encode()
+    sigSent = signal_Send.encode()
+    s.send(sigSent)
+    time.sleep(1)
+    s.send(startContainer_send)
+
 
 def createcontainer():
     signal_Send = "create containers"
@@ -156,15 +181,24 @@ def createcontainer():
 
 
 def destroycontainer():
-    signal_Send = "create containers"
+    signal_Send = "destroy containers"
     sigSent = signal_Send.encode()
     s.send(sigSent)
     while True:
-        destroyoutput = s.recv(2048)  # and wait for a message from the server
-        destroyoutput = destroyoutput.decode()  # we then turn it back into a string
-        print(destroyoutput)  # and print it
-        if destroyoutput != '':  # this just checks to see if we got anything, once the server responds the loop breaks
-            break
+        destroystatement = s.recv(2048)  # and wait for a message from the server
+        destroystatement = destroystatement.decode()  # we then turn it back into a string
+        print(destroystatement)  # and print it
+
+        destroyresponse = str(input())
+        print(destroyresponse)
+        sigSent = destroyresponse.encode()
+        s.send(sigSent)
+
+        destroyres = s.recv(2048)
+        destroyresult = destroyres.decode()
+        print(destroyresult)
+
+        break
 
 
 def runningContainers(): ## Further Example
@@ -256,7 +290,7 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
     Button(win2, bg='#ca891d', activebackground='gray25', text='See Current Containers', command=runningContainers).grid(row=2, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button3', ).grid(row=3, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button4', ).grid(row=4, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button5', ).grid(row=6, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Start Container', command=startEntry).grid(row=6, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button6', ).grid(row=7, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='Get Container Logs', command=logcontainers).grid(row=8, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button8', ).grid(row=9, column=1, pady=0)
