@@ -84,15 +84,11 @@ if PIN_ASK.lower() == 'y':
 Attempts = 0
 
 def start():
-    print("Check 1")
     client.containers.list(all=True)
-    print("Check 2")
-    print(start_name)
-    print("Check 3")
-    client.containers.run(start_name)
-    print("Check 4")
-    print("container status: " + client.name.status())
-    input("\nfinished, press enter...\n")
+    print("Attempting to launch container:", start_name)
+    container = client.containers.get(start_name)
+    container.start()
+    print("Container", start_name, "Launched Successfully!")
 
 def reverseshell():  # This Function Launches our Reverse Shell
     subprocess.run(["python", "reverseshell/reverseClient.py"])
