@@ -172,6 +172,32 @@ def start(): ## Further Example
     time.sleep(1)
     s.send(startContainer_send)
 
+def stopEntry():
+    global stopWin
+    global containerStop
+    stopWin = Toplevel()
+    stopWin.title("Enter container name")
+    stopWin.resizable(True, True)
+    stopWin.configure(bg='#010204')
+    containerStop = Entry(stopWin, width=6, bg="gray25", fg='#ca891d')
+    containerStop.grid(row=12, column=8)
+    Label(stopWin, bg='black', fg='white', text='Container name:').grid(row=12, column=7)
+    Button(stopWin, bg='#ca891d', activebackground='gray25', text='Enter', command=stop).grid(row=13, column=9, pady=0)
+    Button(stopWin, bg='#ca891d', activebackground='gray25', text='Exit', command=stopWin.quit).grid(row=13, column=7, pady=0)
+
+
+def stop(): ## Further Example
+    global stopGrab
+    stopGrab = containerStop.get()
+    stopWin.destroy()
+    signal_Send = "stop"
+    stopContainer_send = stopGrab.encode()
+    sigSent = signal_Send.encode()
+    s.send(sigSent)
+    time.sleep(1)
+    s.send(stopContainer_send)
+
+
 
 def createcontainer():
     signal_Send = "create containers"
@@ -297,7 +323,7 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
     Button(win2, bg='#ca891d', activebackground='gray25', text='button3', ).grid(row=3, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button4', ).grid(row=4, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='Start Container', command=startEntry).grid(row=6, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button6', ).grid(row=7, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Stop Container', command=stopEntry ).grid(row=7, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='Get Container Logs', command=logcontainers).grid(row=8, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button8', ).grid(row=9, column=1, pady=0)
     exitButton = Button(win2, bg='#ca891d', activebackground='gray25', text='Exit', command=quit)  # This allows us to reference a button later

@@ -90,6 +90,13 @@ def start():
     container.start()
     print("Container", start_name, "Launched Successfully!")
 
+def stop():
+    client.containers.list(all=True)
+    print("Attempting to stop container:", stop_name)
+    container = client.containers.get(stop_name)
+    container.stop()
+    print("Container", stop_name, "Stopped Successfully!")
+
 def reverseshell():  # This Function Launches our Reverse Shell
     subprocess.run(["python", "reverseshell/reverseClient.py"])
     print("Shell Running")
@@ -203,6 +210,7 @@ print(f"[*] Listening as {SERVER_HOST}:{SERVER_PORT}")
 
 def listen_for_client(cs):
     global start_name
+    global stop_name
     """
     This function keep listening for a message from cs socket
     Whenever a message is received, Follows the IF Statement Chain
@@ -224,6 +232,10 @@ def listen_for_client(cs):
                 time.sleep(1)
                 start_name = client_socket.recv(1024).decode()
                 start()
+            if msg == "stop":
+                time.sleep(1)
+                stop_name = client_socket.recv(1024).decode()
+                stop()
 
             if msg == "pullImages":
                 checkimage(client)
