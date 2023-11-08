@@ -8,7 +8,7 @@ from idlelib.tooltip import Hovertip
 from pathlib import Path
 from tkinter import *
 from tkinter import messagebox  # Weirdly, despite importing tkinter *, we still need this
-
+from tkinter import simpledialog
 import rsa
 from PIL import ImageTk, Image
 from cryptography.fernet import Fernet
@@ -246,6 +246,18 @@ def runningContainers(): ## Further Example
             break
 
 
+def getresources():
+    signal_Send = "Get Resources"
+    sigSent = signal_Send.encode()
+    s.send(sigSent)
+    containerask = simpledialog.askstring("Get Container Stats", "What Container do you want the Stats from? "
+                                                                 "(shorthand ID)")
+    print(containerask)  # DEBUG
+    sigSent = containerask.encode()
+    s.send(sigSent)
+    resourceusage = s.recv(2048)
+    resourceusage = resourceusage.decode()
+    print(resourceusage)
 
 def reverseshell():  # Launches our Reverse Shell
     userwarning = messagebox.askyesnocancel("Confirmation", "This Menu will freeze while using the Remote Shell"
@@ -278,6 +290,7 @@ def show_data():
     print(rawPort)
     win.destroy()
 
+
 def menu1Grab():
     global serverIP
     global rawPort
@@ -288,6 +301,7 @@ def menu1Grab():
     print(rawPort)
     win.destroy()
     pinMenu()
+
 
 def menu2Grab():
     global CLIENT_PIN
@@ -323,9 +337,9 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
     Button(win2, bg='#ca891d', activebackground='gray25', text='button3', ).grid(row=3, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button4', ).grid(row=4, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='Start Container', command=startEntry).grid(row=6, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Stop Container', command=stopEntry ).grid(row=7, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Stop Container', command=stopEntry).grid(row=7, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='Get Container Logs', command=logcontainers).grid(row=8, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button8', ).grid(row=9, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Get Container Stats', command=getresources).grid(row=9, column=1, pady=0)
     exitButton = Button(win2, bg='#ca891d', activebackground='gray25', text='Exit', command=quit)  # This allows us to reference a button later
     # Right Row
     Button(win2, bg='#ca891d', activebackground='gray25', text='create containers', command=createcontainer).grid(row=1, column=3, pady=0)

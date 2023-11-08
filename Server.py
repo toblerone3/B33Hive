@@ -15,7 +15,6 @@ key = Fernet.generate_key()
 Fern = Fernet(key)
 
 
-
 dockerDebug = input("Launch with Docker? [Y/N] (DEBUG, REMOVE BEFORE HAND IN):")
 while dockerDebug.lower() not in ('y', 'n'):
     dockerDebug = input("Please Enter Only a Y or an N Character: ")
@@ -158,10 +157,8 @@ def destroy():
         sigSent = destroyed.encode()
         s.send(sigSent)
 
-
     except:
         input("\nsuffix not known or incorrectly typed, trying again\n")
-
 
 
 def checkimage(client):
@@ -179,7 +176,29 @@ def checkimage(client):
         break
 
 
+def get_cpu_percentage(stats):
+    cpu_stats = stats['cpu_stats']
+    precpu_stats = stats['precpu_stats']
 
+    if 'system_cpu_usage' in cpu_stats and 'system_cpu_usage' in precpu_stats:
+        cpu_delta = cpu_stats['cpu_usage']['total_usage'] - precpu_stats['cpu_usage']['total_usage']
+        system_delta = cpu_stats['system_cpu_usage'] - precpu_stats['system_cpu_usage']
+        cpu_usage_percentage = 100.0 * cpu_delta / system_delta
+        return cpu_usage_percentage
+    else:
+        return None
+
+
+def get_memory_percentage(stats):
+    memory_stats = stats['memory_stats']
+    memory_usage = memory_stats['usage']
+    memory_limit = memory_stats['limit']
+
+    if memory_limit > 0:
+        memory_usage_percentage = (memory_usage / memory_limit) * 100
+        return memory_usage_percentage
+    else:
+        return None
 
 
 while True:
@@ -211,6 +230,8 @@ print(f"[*] Listening as {SERVER_HOST}:{SERVER_PORT}")
 def listen_for_client(cs):
     global start_name
     global stop_name
+    global cpu_send
+    global mem_send
     """
     This function keep listening for a message from cs socket
     Whenever a message is received, Follows the IF Statement Chain
@@ -239,8 +260,6 @@ def listen_for_client(cs):
 
             if msg == "pullImages":
                 checkimage(client)
-
-
 
             if msg == "Get Container Logs":
                 print("Getting Container Logs")
@@ -273,6 +292,31 @@ def listen_for_client(cs):
                 create()
             if msg == "destroy containers":
                 destroy()
+            if msg == "Get Resources":
+                print("Getting Container Resource Usage")
+                rscname = cs.recv(1024).decode()
+                if rscname == "Cancel":
+                    listen_for_client()
+                    break
+                else:
+                    print(rscname)
+                    print("Check 1")
+                    container = client.containers.get(rscname)
+                    for stat in container.stats(decode=True):
+                        cpu_percentage = get_cpu_percentage(stat)
+                        memory_percentage = get_memory_percentage(stat)
+                        cpu_send = ''
+                        mem_send = ''
+                        if cpu_percentage is not None:
+                            cpu_send = ("CPU Usage Percentage: {:.2f}%".format(cpu_percentage))
+                            print(cpu_send)
+                        if memory_percentage is not None:
+                            mem_send = ("Memory Usage Percentage: {:.2f}%".format(memory_percentage))
+                            print(mem_send)
+                        resources = ('CPU Usage is: ', cpu_send, '\n Memory Usage is: ', mem_send)
+                        resources = str(resources).encode()
+                        client_socket.send(resources)
+                        break
 
         except Exception as e:
             # client no longer connected
