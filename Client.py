@@ -160,6 +160,19 @@ def startEntry():
     Button(startWin, bg='#ca891d', activebackground='gray25', text='Enter', command=start).grid(row=13, column=9, pady=0)
     Button(startWin, bg='#ca891d', activebackground='gray25', text='Exit', command=startWin.quit).grid(row=13, column=7, pady=0)
 
+def remEntry():
+    global remWin
+    global containerrem
+    remWin = Toplevel()
+    remWin.title("Enter container name")
+    remWin.resizable(True, True)
+    remWin.configure(bg='#010204')
+    containerrem = Entry(remWin, width=6, bg="gray25", fg='#ca891d')
+    containerrem.grid(row=12, column=8)
+    Label(remWin, bg='black', fg='white', text='Container name:').grid(row=12, column=7)
+    Button(remWin, bg='#ca891d', activebackground='gray25', text='Enter', command=destroycontainer).grid(row=13, column=9, pady=0)
+    Button(remWin, bg='#ca891d', activebackground='gray25', text='Exit', command=remWin.quit).grid(row=13, column=7, pady=0)
+
 
 def start(): ## Further Example
     global startGrab
@@ -210,26 +223,17 @@ def createcontainer():
         if createoutput != '':  # this just checks to see if we got anything, once the server responds the loop breaks
             break
 
-
 def destroycontainer():
+    global RemGrab
+    RemGrab = containerrem.get()
+    remWin.destroy()
     signal_Send = "destroy containers"
+    remContainer_send = RemGrab.encode()
     sigSent = signal_Send.encode()
     s.send(sigSent)
-    while True:
-        destroystatement = s.recv(2048)  # and wait for a message from the server
-        destroystatement = destroystatement.decode()  # we then turn it back into a string
-        print(destroystatement)  # and print it
+    time.sleep(1)
+    s.send(remContainer_send)
 
-        destroyresponse = str(input())
-        print(destroyresponse)
-        sigSent = destroyresponse.encode()
-        s.send(sigSent)
-
-        destroyres = s.recv(2048)
-        destroyresult = destroyres.decode()
-        print(destroyresult)
-
-        break
 
 
 def runningContainers(): ## Further Example
@@ -343,7 +347,7 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
     exitButton = Button(win2, bg='#ca891d', activebackground='gray25', text='Exit', command=quit)  # This allows us to reference a button later
     # Right Row
     Button(win2, bg='#ca891d', activebackground='gray25', text='create containers', command=createcontainer).grid(row=1, column=3, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='destroy containers', command=destroycontainer).grid(row=2, column=3, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='destroy containers', command=remEntry).grid(row=2, column=3, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button11', ).grid(row=3, column=3, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button12', ).grid(row=4, column=3, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button13', ).grid(row=6, column=3, pady=0)
@@ -385,7 +389,7 @@ def pinMenu():
     entryPIN.grid(row=12, column=8)
     Label(winpin, bg='black', fg='white', text='PIN (Optional):').grid(row=12, column=7)
     Button(winpin, bg='#ca891d', activebackground='gray25', text='Enter', command=menu2Grab).grid(row=13, column=9, pady=0)
-    Button(winpin, bg='#ca891d', activebackground='gray25', text='Exit', command=winpin.quit).grid(row=13, column=7, pady=0)
+    Button(winpin, bg='#ca891d', activebackground='gray25', text='Exit', command=quit).grid(row=13, column=7, pady=0)
     winpin.bind('<Return>', lambda e, w=winpin: menu2Grab())
     winpin.mainloop()
 
