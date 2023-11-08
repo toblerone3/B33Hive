@@ -104,22 +104,32 @@ def logcontainers(): ## THIS IS HOW WE SEND TO THE SERVER, THIS CAN BE REPEATED 
 
 def logMenuGrab():
     global loggrab
+    messagebox.showinfo("Warning", "The Client will hang for five seconds while retrieving logs ")
     loggrab = entryLog.get()
     print(loggrab)
     winlog.destroy()
     signal_Send = loggrab
     sigSent = signal_Send.encode()
     s.send(sigSent)
-    logsreturned = s.recv(11264)
-    print(logsreturned)
-    enclogs = logsreturned.decode()
-    print(enclogs)
-    declogs = Fern.decrypt(enclogs)
+    with open('raw.txt', 'w') as f:
+        while True:
+            logsreturned = s.recv(512).decode()
+            print(logsreturned)
+            if logsreturned == '':
+                break
+            if 'EOT' in logsreturned:
+                break
+            f.write(logsreturned)
+            logsreturned = ''
+    with open('raw.txt', 'r') as logfile:
+        rawlogs = logfile.read()
+    declogs = Fern.decrypt(rawlogs)
     strlogs = str(declogs)
     logwrap = '\n'.join(re.findall('.{1,128}', strlogs))
     f = open("%sContainerLogs.txt" % loggrab, "w")
     f.write(logwrap)
-    print(declogs[4:]) # DEBUG ONLY
+    print(declogs[4:])  # DEBUG ONLY
+    messagebox.showinfo("Success", "Wrote Container Logs to %sContainerLogs.txt" % loggrab)
 
 
 def logquit():
