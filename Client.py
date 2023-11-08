@@ -115,12 +115,9 @@ def logMenuGrab():
         while True:
             logsreturned = s.recv(512).decode()
             print(logsreturned)
-            if logsreturned == '':
-                break
             if 'EOT' in logsreturned:
                 break
             f.write(logsreturned)
-            logsreturned = ''
     with open('raw.txt', 'r') as logfile:
         rawlogs = logfile.read()
     declogs = Fern.decrypt(rawlogs)
