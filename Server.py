@@ -130,37 +130,11 @@ def create():
 
 
 def destroy():
-    destroystatement = "please enter the suffix of the container group to delete: "
-    destroystatementencode = destroystatement.encode()
-    client_socket.send(destroystatementencode)
-    #time.sleep(1)
-    #destroyname = client_socket.recv(1024).decode()
-
-
-    try:
-        destroyname = client_socket.recv(1024).decode()
-        print(destroyname)
-
-        destroykippo = "kippo-" + destroyname
-        destroysql = "sql-" + destroykippo
-        destroygraph = "graph-" + destroykippo
-
-        print("deleted kippo container with name: " + destroykippo)
-        client.containers.remove(name=destroykippo, v=True, force=True)
-
-        client.containers.remove(name=destroysql, v=True, force=True)
-        print("deleted kippo container with name: " + destroykippo)
-        client.containers.remove(name=destroygraph, v=True, force=True)
-        print("deleted kippo container with name: " + destroygraph)
-
-        destroyed = "deleted kippo container with names: " + destroykippo + "" + destroysql + "" + destroygraph
-
-        sigSent = destroyed.encode()
-        s.send(sigSent)
-
-
-    except:
-        input("\nsuffix not known or incorrectly typed, trying again\n")
+    client.containers.list(all=True)
+    print("Attempting to remove container:", rem_name)
+    container = client.containers.get(rem_name)
+    container.remove()
+    print("Container", rem_name, "Launched Successfully!")
 
 
 
@@ -211,6 +185,7 @@ print(f"[*] Listening as {SERVER_HOST}:{SERVER_PORT}")
 def listen_for_client(cs):
     global start_name
     global stop_name
+    global rem_name
     """
     This function keep listening for a message from cs socket
     Whenever a message is received, Follows the IF Statement Chain
@@ -272,6 +247,8 @@ def listen_for_client(cs):
             if msg == "create containers":
                 create()
             if msg == "destroy containers":
+                time.sleep(1)
+                rem_name = client_socket.recv(1024).decode()
                 destroy()
 
         except Exception as e:
