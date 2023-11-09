@@ -82,6 +82,7 @@ if PIN_ASK.lower() == 'y':
 
 Attempts = 0
 
+
 def start():
     client.containers.list(all=True)
     if start_name not in str(client.containers.list(all=True)):
@@ -96,6 +97,7 @@ def start():
         cl_response = ("Container", start_name, "Launched Successfully!")
         cl_response = str(cl_response).encode()
         client_socket.send(cl_response)
+
 def stop():
     client.containers.list(all=True)
     if stop_name not in str(client.containers.list(all=True)):
@@ -109,6 +111,7 @@ def stop():
         cl_response = ("Container", stop_name, "Stopped Successfully!")
         cl_response = str(cl_response).encode()
         client_socket.send(cl_response)
+
 
 def reverseshell():  # This Function Launches our Reverse Shell
     subprocess.run(["python", "reverseshell/reverseClient.py"])
@@ -144,10 +147,20 @@ def create():
 
 def destroy():
     client.containers.list(all=True)
-    print("Attempting to remove container:", rem_name)
-    container = client.containers.get(rem_name)
-    container.remove()
-    print("Container", rem_name, "Destroyed Successfully!")
+    if rem_name not in str(client.containers.list(all=True)):
+        print("Invalid Container ID")
+        cl_response = "Invalid Container ID".encode()
+        client_socket.send(cl_response)
+    else:
+        print("Attempting to remove container:", rem_name)
+        container = client.containers.get(rem_name)
+        container.remove()
+        print("Container", rem_name, "Destroyed Successfully!")
+        cl_response = ("Container", rem_name, "Destroyed Successfully!")
+        cl_response = str(cl_response).encode()
+        client_socket.send(cl_response)
+
+
 
 
 def checkimage(client):

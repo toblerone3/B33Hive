@@ -234,6 +234,21 @@ def destroycontainer():
     s.send(sigSent)
     time.sleep(1)
     s.send(remContainer_send)
+    deleteoutput = s.recv(2048)  # and wait for a message from the server
+    deleteoutput = deleteoutput.decode()  # we then turn it back into a string
+    print(deleteoutput)  # and print it
+    if deleteoutput == 'Invalid Container ID':
+        messagebox.showinfo("Invalid ID", "Invalid Container ID, Please ensure you're using the"
+                            " Containers Shorthand ID")
+    else:
+        deleteoutput = deleteoutput.replace(",", "")
+        deleteoutput = deleteoutput.replace("'", "")
+        deleteoutput = deleteoutput.replace(")", "")
+        deleteoutput = deleteoutput.replace("(", "")
+        print(deleteoutput)
+        messagebox.showinfo("Success", deleteoutput)
+
+
 
 
 def runningContainers(): ## Further Example
