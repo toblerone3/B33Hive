@@ -23,3 +23,5 @@ Requires the Following Ports to be Open: \
 5004 - Reverse Shell 
 
 You can change these ports in Server.py and reverseshell/reserveServer.py and reverseshell/reserveClient.py
+
+[Trello Board](https://trello.com/b/VC0HLcnX/b33hive)
