@@ -179,13 +179,17 @@ def start(): ## Further Example
     time.sleep(1)
     s.send(startContainer_send)
     response = s.recv(1024).decode()
-    # This is hacky, but it works
-    response = response.replace(",", "")
-    response = response.replace("'", "")
-    response = response.replace(")", "")
-    response = response.replace("(", "")
-    print(response)
-    messagebox.showinfo("Success", response)
+    if response == 'Invalid Start Name':
+        messagebox.showinfo("Invalid ID", "Invalid Container ID, Please ensure you're using the" 
+                                          " Containers Shorthand ID")
+    else:
+        # This is hacky, but it works
+        response = response.replace(",", "")
+        response = response.replace("'", "")
+        response = response.replace(")", "")
+        response = response.replace("(", "")
+        print(response)
+        messagebox.showinfo("Success", response)
 
 
 def stop(): ## Further Example
@@ -197,13 +201,17 @@ def stop(): ## Further Example
     time.sleep(1)
     s.send(stopContainer_send)
     response = s.recv(1024).decode()
-    # This is hacky, but it works
-    response = response.replace(",", "")
-    response = response.replace("'", "")
-    response = response.replace(")", "")
-    response = response.replace("(", "")
-    print(response)
-    messagebox.showinfo("Success", response)
+    if response == 'Invalid Start Name':
+        messagebox.showinfo("Invalid ID", "Invalid Container ID, Please ensure you're using the" 
+                                          " Containers Shorthand ID")
+    else:
+        # This is hacky, but it works
+        response = response.replace(",", "")
+        response = response.replace("'", "")
+        response = response.replace(")", "")
+        response = response.replace("(", "")
+        print(response)
+        messagebox.showinfo("Success", response)
 
 
 def createcontainer():

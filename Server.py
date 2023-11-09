@@ -84,21 +84,31 @@ Attempts = 0
 
 def start():
     client.containers.list(all=True)
-    print("Attempting to launch container:", start_name)
-    container = client.containers.get(start_name)
-    container.start()
-    print("Container", start_name, "Launched Successfully!")
-    cl_response = ("Container", start_name, "Launched Successfully!")
-    cl_response = str(cl_response).encode()
-    client_socket.send(cl_response)
+    if start_name not in str(client.containers.list(all=True)):
+        print("Invalid Start Name Received")
+        cl_response = 'Invalid Start Name'.encode()
+        client_socket.send(cl_response)
+    else:
+        print("Attempting to launch container:", start_name)
+        container = client.containers.get(start_name)
+        container.start()
+        print("Container", start_name, "Launched Successfully!")
+        cl_response = ("Container", start_name, "Launched Successfully!")
+        cl_response = str(cl_response).encode()
+        client_socket.send(cl_response)
 def stop():
     client.containers.list(all=True)
-    print("Attempting to stop container:", stop_name)
-    container = client.containers.get(stop_name)
-    container.stop()
-    cl_response = ("Container", start_name, "Stopped Successfully!")
-    cl_response = str(cl_response).encode()
-    client_socket.send(cl_response)
+    if stop_name not in str(client.containers.list(all=True)):
+        print("Invalid Start Name Received")
+        cl_response = 'Invalid Start Name'.encode()
+        client_socket.send(cl_response)
+    else:
+        print("Attempting to stop container:", stop_name)
+        container = client.containers.get(stop_name)
+        container.stop()
+        cl_response = ("Container", stop_name, "Stopped Successfully!")
+        cl_response = str(cl_response).encode()
+        client_socket.send(cl_response)
 
 def reverseshell():  # This Function Launches our Reverse Shell
     subprocess.run(["python", "reverseshell/reverseClient.py"])
