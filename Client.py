@@ -82,9 +82,13 @@ def disconnect():
     print("Disconnecting...")
     signal_Send = "Disconnect"
     sigSent = signal_Send.encode()
-    s.send(sigSent)
-    s.close()
-    quit()
+    try:
+        s.send(sigSent)
+        s.close()
+        quit()
+    except Exception as e:
+        quit()
+
 
 
 def debugMain():  # This is how we skip to the main menu for debug, does not connect to the server
@@ -316,7 +320,7 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
     Button(win2, bg='#ca891d', activebackground='gray25', text='Stop Container', command=stop).grid(row=7, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='Get Container Logs', command=logcontainers).grid(row=8, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='Get Container Stats', command=getresources).grid(row=9, column=1, pady=0)
-    exitButton = Button(win2, bg='#ca891d', activebackground='gray25', text='Exit', command=quit)  # This allows us to reference a button later
+
     # Right Row
     Button(win2, bg='#ca891d', activebackground='gray25', text='create containers', command=createcontainer).grid(row=1, column=3, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='destroy containers', command=remEntry).grid(row=2, column=3, pady=0)
@@ -328,9 +332,14 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
     Button(win2, bg='#ca891d', activebackground='gray25', text='Start Remote Shell', command=reverseshell).grid(row=9, column=3, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='Disconnect', command=disconnect).grid(row=10, column=3, pady=0) ##Both Buttons currently call disconnect due to the fact we can't recall our login screen
 
-    # TO-DO: We should remove this and the exit button before hand in as they are only for debug purposes
-    exitbuttontip = Hovertip(exitButton, "DO NOT USE IF YOU'RE CONNECTED TO THE SERVER")  # Here we're referencing the exit button we saved as a variable
-    exitButton.grid(row=10, column=1, pady=0)  # Here we tell tkinter to put exitbutton into the grid
+    # This is just an example for how to make a tooltip, the below code is now redundant and
+    # should only be used for as a reference
+    # This allows us to reference a button later
+    # exitButton = Button(win2, bg='#ca891d', activebackground='gray25', text='Exit', command=quit)
+    # Here we're referencing the exit button we saved as a variable
+    # exitbuttontip = Hovertip(exitButton, "DO NOT USE IF YOU'RE CONNECTED TO THE SERVER")
+    # Here we tell tkinter to put exitbutton into the grid
+    # exitButton.grid(row=10, column=1, pady=0)
 
     entryBox = Entry(win2, width=32, bg="gray25", fg='#ca891d')
     entryBox.grid(row=9, column=2)
