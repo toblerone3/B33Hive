@@ -304,6 +304,15 @@ def menu2Grab():
     #pinexchange()
 
 
+def entryboxGrab():
+    secretINPUT = entryBox.get()
+    if secretINPUT == 'physics'.lower():
+        print('check 1')
+        messagebox.showinfo("What do bees chew?", "Bumble gum!"
+                            "\n(check the terminal)")
+        subprocess.run(["python", "bee.py"])
+
+
 # ------------------------------------------------------- MENU'S -------------------------------------------------------
 def on_closing():
     print("Shutting down B33Hive client...")
@@ -311,6 +320,7 @@ def on_closing():
 
 
 def mainMenu():  # This is our main menu, functionalized, so we can debug and call later
+    global entryBox
     win2 = Tk()
     win2.title("B33Hive: Main Menu")
     # win.geometry("640x480")
@@ -353,6 +363,8 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
 
     entryBox = Entry(win2, width=32, bg="gray25", fg='#ca891d')
     entryBox.grid(row=9, column=2)
+    win2.bind('<Return>', lambda e, w=win2: entryboxGrab())
+
     win2.protocol("WM_DELETE_WINDOW", on_closing)
     # This entry box is to send commands to the server,
     # clientInput = entryBox.get() #This is how we'll grab from the entry box later
