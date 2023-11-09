@@ -269,6 +269,7 @@ def runningContainers():  ## Further Example
         msgbox_print = ""
         for container in printcontainers:
             msgbox_print += str(container) + "\n"
+        print(msgbox_print)
         messagebox.showinfo("Current containers:", msgbox_print)
         if currentcontainers != '':
             break
