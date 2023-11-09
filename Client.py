@@ -170,15 +170,10 @@ def startEntry():
 def remEntry():
     global remWin
     global containerrem
-    remWin = Toplevel()
-    remWin.title("Enter container name")
-    remWin.resizable(True, True)
-    remWin.configure(bg='#010204')
-    containerrem = Entry(remWin, width=6, bg="gray25", fg='#ca891d')
-    containerrem.grid(row=12, column=8)
-    Label(remWin, bg='black', fg='white', text='Container name:').grid(row=12, column=7)
-    Button(remWin, bg='#ca891d', activebackground='gray25', text='Enter', command=destroycontainer).grid(row=13, column=9, pady=0)
-    Button(remWin, bg='#ca891d', activebackground='gray25', text='Exit', command=remWin.quit).grid(row=13, column=7, pady=0)
+    containerrem = simpledialog.askstring("Destroy Container", "Enter a Container ID to destroy it")
+    print(containerrem)
+    destroycontainer()
+
 
 
 def start(): ## Further Example
@@ -192,31 +187,22 @@ def start(): ## Further Example
     time.sleep(1)
     s.send(startContainer_send)
 
+
 def stopEntry():
     global stopWin
     global containerStop
-    stopWin = Toplevel()
-    stopWin.title("Enter container name")
-    stopWin.resizable(True, True)
-    stopWin.configure(bg='#010204')
-    containerStop = Entry(stopWin, width=6, bg="gray25", fg='#ca891d')
-    containerStop.grid(row=12, column=8)
-    Label(stopWin, bg='black', fg='white', text='Container name:').grid(row=12, column=7)
-    Button(stopWin, bg='#ca891d', activebackground='gray25', text='Enter', command=stop).grid(row=13, column=9, pady=0)
-    Button(stopWin, bg='#ca891d', activebackground='gray25', text='Exit', command=stopWin.quit).grid(row=13, column=7, pady=0)
+    containerStop = simpledialog.askstring("Stop Container", "Enter a Container ID to stop it")
+    print(containerStop)
+    stop()
 
 
 def stop(): ## Further Example
-    global stopGrab
-    stopGrab = containerStop.get()
-    stopWin.destroy()
     signal_Send = "stop"
-    stopContainer_send = stopGrab.encode()
+    stopContainer_send = containerStop.encode()
     sigSent = signal_Send.encode()
     s.send(sigSent)
     time.sleep(1)
     s.send(stopContainer_send)
-
 
 
 def createcontainer():
@@ -230,17 +216,15 @@ def createcontainer():
         if createoutput != '':  # this just checks to see if we got anything, once the server responds the loop breaks
             break
 
+
 def destroycontainer():
-    global RemGrab
-    RemGrab = containerrem.get()
-    remWin.destroy()
+    print(containerrem)
     signal_Send = "destroy containers"
-    remContainer_send = RemGrab.encode()
+    remContainer_send = containerrem.encode()
     sigSent = signal_Send.encode()
     s.send(sigSent)
     time.sleep(1)
     s.send(remContainer_send)
-
 
 
 def runningContainers(): ## Further Example
@@ -269,6 +253,7 @@ def getresources():
     resourceusage = s.recv(2048)
     resourceusage = resourceusage.decode()
     print(resourceusage)
+
 
 def reverseshell():  # Launches our Reverse Shell
     userwarning = messagebox.askyesnocancel("Confirmation", "This Menu will freeze while using the Remote Shell"
@@ -323,6 +308,9 @@ def menu2Grab():
 
 
 # ------------------------------------------------------- MENU'S -------------------------------------------------------
+def on_closing():
+    print("Shutting down B33Hive client...")
+    disconnect()
 
 
 def mainMenu():  # This is our main menu, functionalized, so we can debug and call later
@@ -369,6 +357,7 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
 
     entryBox = Entry(win2, width=32, bg="gray25", fg='#ca891d')
     entryBox.grid(row=9, column=2)
+    win2.protocol("WM_DELETE_WINDOW", on_closing)
     # This entry box is to send commands to the server,
     # clientInput = entryBox.get() #This is how we'll grab from the entry box later
 

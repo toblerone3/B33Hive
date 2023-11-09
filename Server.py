@@ -133,7 +133,7 @@ def destroy():
     print("Attempting to remove container:", rem_name)
     container = client.containers.get(rem_name)
     container.remove()
-    print("Container", rem_name, "Launched Successfully!")
+    print("Container", rem_name, "Destroyed Successfully!")
 
 
 def checkimage(client):
