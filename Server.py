@@ -98,6 +98,7 @@ def start():
         cl_response = str(cl_response).encode()
         client_socket.send(cl_response)
 
+
 def stop():
     client.containers.list(all=True)
     if stop_name not in str(client.containers.list(all=True)):
@@ -159,8 +160,6 @@ def destroy():
         cl_response = ("Container", rem_name, "Destroyed Successfully!")
         cl_response = str(cl_response).encode()
         client_socket.send(cl_response)
-
-
 
 
 def checkimage(client):
@@ -314,6 +313,9 @@ def listen_for_client(cs):
                 if rscname == "Cancel":
                     listen_for_client()
                     break
+                if rscname not in str(client.containers.list(all=True)):
+                    cl_response = "Invalid ID".encode()
+                    client_socket.send(cl_response)
                 else:
                     print(rscname)
                     print("Check 1")

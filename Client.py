@@ -276,7 +276,12 @@ def getresources():
     s.send(sigSent)
     resourceusage = s.recv(2048)
     resourceusage = resourceusage.decode()
-    print(resourceusage)
+    if resourceusage == 'Invalid ID':
+        messagebox.showinfo("Invalid ID", "Invalid Container ID, Please ensure you're using the" 
+                            " Containers Shorthand ID")
+    else:
+        print(resourceusage)
+        messagebox.showinfo("Success", resourceusage)
 
 
 def reverseshell():  # Launches our Reverse Shell
