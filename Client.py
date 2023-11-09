@@ -174,6 +174,14 @@ def start(): ## Further Example
     s.send(sigSent)
     time.sleep(1)
     s.send(startContainer_send)
+    response = s.recv(1024).decode()
+    # This is hacky, but it works
+    response = response.replace(",", "")
+    response = response.replace("'", "")
+    response = response.replace(")", "")
+    response = response.replace("(", "")
+    print(response)
+    messagebox.showinfo("Success", response)
 
 
 def stop(): ## Further Example
@@ -184,6 +192,14 @@ def stop(): ## Further Example
     s.send(sigSent)
     time.sleep(1)
     s.send(stopContainer_send)
+    response = s.recv(1024).decode()
+    # This is hacky, but it works
+    response = response.replace(",", "")
+    response = response.replace("'", "")
+    response = response.replace(")", "")
+    response = response.replace("(", "")
+    print(response)
+    messagebox.showinfo("Success", response)
 
 
 def createcontainer():
@@ -314,21 +330,15 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
     # Left Row
     Button(win2, bg='#ca891d', activebackground='gray25', text='Pull / Update Images', command=pullImages).grid(row=1, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='See Current Containers', command=runningContainers).grid(row=2, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button3', ).grid(row=3, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button4', ).grid(row=4, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Start Container', command=start).grid(row=6, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Stop Container', command=stop).grid(row=7, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Get Container Logs', command=logcontainers).grid(row=8, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Get Container Stats', command=getresources).grid(row=9, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Start Container', command=start).grid(row=8, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Stop Container', command=stop).grid(row=9, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Get Container Logs', command=logcontainers).grid(row=10, column=1, pady=0)
+
 
     # Right Row
     Button(win2, bg='#ca891d', activebackground='gray25', text='create containers', command=createcontainer).grid(row=1, column=3, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='destroy containers', command=remEntry).grid(row=2, column=3, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button11', ).grid(row=3, column=3, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button12', ).grid(row=4, column=3, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button13', ).grid(row=6, column=3, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button14', ).grid(row=7, column=3, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='button15', ).grid(row=8, column=3, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Get Container Stats', command=getresources).grid(row=8, column=3, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='Start Remote Shell', command=reverseshell).grid(row=9, column=3, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='Disconnect', command=disconnect).grid(row=10, column=3, pady=0) ##Both Buttons currently call disconnect due to the fact we can't recall our login screen
 
@@ -466,7 +476,8 @@ pinexchange()
 # -------------------------------------------------------- PIN ---------------------------------------------------------
 totalAttempts = 3
 while True:
-    if SERVER_PIN == '8888': ##8888 is the default pin, if the server doesn't have a pin, it will be automatically set to 8888, so we're checking if we can skip
+    # 8888 is the default pin, if the server doesn't have a pin, it will be automatically set to 8888, so we're checking if we can skip
+    if SERVER_PIN == '8888':
         print("Server Has No Pin, Continuing...")
         mainMenu()
     if SERVER_PIN != '8888':

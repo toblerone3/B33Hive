@@ -88,13 +88,17 @@ def start():
     container = client.containers.get(start_name)
     container.start()
     print("Container", start_name, "Launched Successfully!")
-
+    cl_response = ("Container", start_name, "Launched Successfully!")
+    cl_response = str(cl_response).encode()
+    client_socket.send(cl_response)
 def stop():
     client.containers.list(all=True)
     print("Attempting to stop container:", stop_name)
     container = client.containers.get(stop_name)
     container.stop()
-    print("Container", stop_name, "Stopped Successfully!")
+    cl_response = ("Container", start_name, "Stopped Successfully!")
+    cl_response = str(cl_response).encode()
+    client_socket.send(cl_response)
 
 def reverseshell():  # This Function Launches our Reverse Shell
     subprocess.run(["python", "reverseshell/reverseClient.py"])
