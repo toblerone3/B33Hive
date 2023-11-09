@@ -90,6 +90,14 @@ def disconnect():
         quit()
 
 
+def localhost():
+    global serverIP
+    global rawPort
+    win.destroy()
+    serverIP = '127.0.0.1'
+    rawPort = '5003'
+
+
 
 def debugMain():  # This is how we skip to the main menu for debug, does not connect to the server
     win.destroy()
@@ -492,6 +500,7 @@ win.bind('<Return>', lambda e, w=win: menu1Grab())
 Button(win, bg='#ca891d', activebackground='gray25', text='Connect', command=menu1Grab).grid(row=13, column=9, pady=0)
 Button(win, bg='#ca891d', activebackground='gray25', text='Exit', command=win.quit).grid(row=13, column=7, pady=0)
 Button(win, bg='#ca891d', activebackground='gray25', text='Debug Main', command=debugMain).grid(row=1, column=9, pady=0)
+Button(win, bg='#ca891d', activebackground='gray25', text='Local Host', command=localhost).grid(row=1, column=7, pady=0)
 # added 'Debug Main' to load main menu without having to connect to the server, remove before hand in
 
 mainloop()  # End of First Tkinter Window
