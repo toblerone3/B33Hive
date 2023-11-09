@@ -124,13 +124,17 @@ def logMenuGrab():
             f.write(logsreturned)
     with open('raw.txt', 'r') as logfile:
         rawlogs = logfile.read()
-    declogs = Fern.decrypt(rawlogs)
-    strlogs = str(declogs)
-    logwrap = '\n'.join(re.findall('.{1,128}', strlogs))
-    f = open("%sContainerLogs.txt" % loggrab, "w")
-    f.write(logwrap)
-    print(declogs[4:])  # DEBUG ONLY
-    messagebox.showinfo("Success", "Wrote Container Logs to %sContainerLogs.txt" % loggrab)
+    if rawlogs == 'Not Valid':
+        messagebox.showinfo("Invalid ID", "Invalid Container ID, Please ensure you're using the" 
+                                          " Containers Shorthand ID")
+    else:
+        declogs = Fern.decrypt(rawlogs)
+        strlogs = str(declogs)
+        logwrap = '\n'.join(re.findall('.{1,128}', strlogs))
+        f = open("%sContainerLogs.txt" % loggrab, "w")
+        f.write(logwrap)
+        print(declogs[4:])  # DEBUG ONLY
+        messagebox.showinfo("Success", "Wrote Container Logs to %sContainerLogs.txt" % loggrab)
 
 
 def logquit():

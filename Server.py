@@ -247,6 +247,13 @@ def listen_for_client(cs):
                 if logname == "Cancel":
                     listen_for_client(cs)
                     break
+                if logname not in str(client.containers.list(all=True)):
+                    print("Ruh Roh Raggy")
+                    log_response = "Not Valid".encode()
+                    client_socket.send(log_response)
+                    time.sleep(5)
+                    endstream = 'EOT'.encode()
+                    client_socket.send(endstream)
                 else:
                     print(logname)
                     print("Check 1")
