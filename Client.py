@@ -17,9 +17,8 @@ import pickle
 key = Fernet.generate_key()
 Fern = Fernet(key)
 
-
 whichOS = platform.system()
-print("Launching",whichOS, "B33Hive Client") ##Just a debug, we need this logic later
+print("Launching", whichOS, "B33Hive Client")  ##Just a debug, we need this logic later
 
 Attempts = 0
 
@@ -56,7 +55,7 @@ f_private.close()
 print("Keys Loaded")
 
 
-def pinexchange(): ## Further Example
+def pinexchange():  ## Further Example
     global SERVER_PIN
     global key
     global Fern
@@ -99,7 +98,6 @@ def localhost():
     rawPort = '5003'
 
 
-
 def debugMain():  # This is how we skip to the main menu for debug, does not connect to the server
     win.destroy()
     mainMenu()
@@ -107,7 +105,7 @@ def debugMain():  # This is how we skip to the main menu for debug, does not con
 
 # --------------------------------------------------- LOG RETRIEVAL ----------------------------------------------------
 
-def logcontainers(): ## THIS IS HOW WE SEND TO THE SERVER, THIS CAN BE REPEATED AD-NAUSEAM
+def logcontainers():  ## THIS IS HOW WE SEND TO THE SERVER, THIS CAN BE REPEATED AD-NAUSEAM
     runningContainers()
     signal_Send = "Get Container Logs"
     sigSent = signal_Send.encode()
@@ -134,7 +132,7 @@ def logMenuGrab():
     with open('raw.txt', 'r') as logfile:
         rawlogs = logfile.read()
     if rawlogs == 'Not Valid':
-        messagebox.showinfo("Invalid ID", "Invalid Container ID, Please ensure you're using the" 
+        messagebox.showinfo("Invalid ID", "Invalid Container ID, Please ensure you're using the"
                                           " Containers Shorthand ID")
     else:
         declogs = Fern.decrypt(rawlogs)
@@ -152,24 +150,26 @@ def logquit():
     s.send(sigSent)
     winlog.destroy()
 
+
 # ------------------------------------------------------- DOCKER -------------------------------------------------------
 
 
-def pullImages(): ## Further Example
+def pullImages():  ## Further Example
     hangwarning = messagebox.askyesnocancel("Confirmation", "This Menu will freeze while the server pulls"
-                                            " the images, are you sure you want to pull the images now?")
+                                                            " the images, are you sure you want to pull the images now?")
     print(hangwarning)
     if hangwarning is True:
         signal_Send = "pullImages"  # We store what we want to send to the server here
         sigSent = signal_Send.encode()  # Then we encode it into bytes
         s.send(sigSent)  # then we send it using s.send
-        while True: # we then start a listener
-            pulledimages = s.recv(2048) # and wait for a message from the server
+        while True:  # we then start a listener
+            pulledimages = s.recv(2048)  # and wait for a message from the server
             printimages = pulledimages.decode()  # we then turn it back into a string
-            print(printimages) # and print it
+            print(printimages)  # and print it
             if pulledimages != '':  # this just checks to see if we got anything, once the server responds the loop breaks
                 break
         messagebox.showinfo("Pulled Images", "Images were successfully pulled / updated")
+
 
 def remEntry():
     global remWin
@@ -179,7 +179,7 @@ def remEntry():
     destroycontainer()
 
 
-def start(): ## Further Example
+def start():  ## Further Example
     containerStart = simpledialog.askstring("Start Container", "Enter a Container ID to start it")
     signal_Send = "start"
     startContainer_send = containerStart.encode()
@@ -189,7 +189,7 @@ def start(): ## Further Example
     s.send(startContainer_send)
     response = s.recv(1024).decode()
     if response == 'Invalid Start Name':
-        messagebox.showinfo("Invalid ID", "Invalid Container ID, Please ensure you're using the" 
+        messagebox.showinfo("Invalid ID", "Invalid Container ID, Please ensure you're using the"
                                           " Containers Shorthand ID")
     else:
         # This is hacky, but it works
@@ -201,7 +201,7 @@ def start(): ## Further Example
         messagebox.showinfo("Success", response)
 
 
-def stop(): ## Further Example
+def stop():  ## Further Example
     containerStop = simpledialog.askstring("Stop Container", "Enter a Container ID to stop it")
     signal_Send = "stop"
     stopContainer_send = containerStop.encode()
@@ -211,7 +211,7 @@ def stop(): ## Further Example
     s.send(stopContainer_send)
     response = s.recv(1024).decode()
     if response == 'Invalid Start Name':
-        messagebox.showinfo("Invalid ID", "Invalid Container ID, Please ensure you're using the" 
+        messagebox.showinfo("Invalid ID", "Invalid Container ID, Please ensure you're using the"
                                           " Containers Shorthand ID")
     else:
         # This is hacky, but it works
@@ -248,7 +248,7 @@ def destroycontainer():
     print(deleteoutput)  # and print it
     if deleteoutput == 'Invalid Container ID':
         messagebox.showinfo("Invalid ID", "Invalid Container ID, Please ensure you're using the"
-                            " Containers Shorthand ID")
+                                          " Containers Shorthand ID")
     else:
         deleteoutput = deleteoutput.replace(",", "")
         deleteoutput = deleteoutput.replace("'", "")
@@ -258,9 +258,7 @@ def destroycontainer():
         messagebox.showinfo("Success", deleteoutput)
 
 
-
-
-def runningContainers(): ## Further Example
+def runningContainers():  ## Further Example
     signal_Send = "Show Running Containers"
     sigSent = signal_Send.encode()
     s.send(sigSent)
@@ -268,9 +266,10 @@ def runningContainers(): ## Further Example
         currentcontainers = s.recv(2048)
         deenc_containers = Fern.decrypt(currentcontainers)
         printcontainers = pickle.loads(deenc_containers)
-        print("Current Containers:")
-        for i in printcontainers:
-            print(i)#[1:][:-1]
+        msgbox_print = ""
+        for container in printcontainers:
+            msgbox_print += str(container) + "\n"
+        messagebox.showinfo("Current containers:", msgbox_print)
         if currentcontainers != '':
             break
 
@@ -287,8 +286,8 @@ def getresources():
     resourceusage = s.recv(2048)
     resourceusage = resourceusage.decode()
     if resourceusage == 'Invalid ID':
-        messagebox.showinfo("Invalid ID", "Invalid Container ID, Please ensure you're using the" 
-                            " Containers Shorthand ID")
+        messagebox.showinfo("Invalid ID", "Invalid Container ID, Please ensure you're using the"
+                                          " Containers Shorthand ID")
     else:
         print(resourceusage)
         messagebox.showinfo("Success", resourceusage)
@@ -296,8 +295,8 @@ def getresources():
 
 def reverseshell():  # Launches our Reverse Shell
     userwarning = messagebox.askyesnocancel("Confirmation", "This Menu will freeze while using the Remote Shell"
-                                            "\nType Exit to return to the Main Menu"
-                                            "\nLaunch the Remote Shell?")
+                                                            "\nType Exit to return to the Main Menu"
+                                                            "\nLaunch the Remote Shell?")
     print(userwarning)
     if userwarning is True:
         signal_Send = "Reverse Shell"
@@ -309,6 +308,7 @@ def reverseshell():  # Launches our Reverse Shell
         print("Reverting to Main Menu")
     elif userwarning is None:
         print("No Input Detected")
+
 
 # ------------------------------------------------- ENTRY BOX GRABBERS -------------------------------------------------
 
@@ -343,7 +343,7 @@ def menu2Grab():
     CLIENT_PIN = entryPIN.get()
     print(CLIENT_PIN)
     winpin.destroy()
-    #pinexchange()
+    # pinexchange()
 
 
 def entryboxGrab():
@@ -351,7 +351,7 @@ def entryboxGrab():
     if secretINPUT == 'physics'.lower():
         print('check 1')
         messagebox.showinfo("What do bees chew?", "Bumble gum!"
-                            "\n(check the terminal)")
+                                                  "\n(check the terminal)")
         subprocess.run(["python", "bee.py"])
 
 
@@ -380,19 +380,34 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
 
     # Lists all our buttons DO NOT USE ROW 5 as this will break the logo formatting
     # Left Row
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Pull / Update Images', command=pullImages).grid(row=1, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='See Current Containers', command=runningContainers).grid(row=2, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Start Container', command=start).grid(row=8, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Stop Container', command=stop).grid(row=9, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Get Container Logs', command=logcontainers).grid(row=10, column=1, pady=0)
-
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Pull / Update Images', command=pullImages).grid(row=1,
+                                                                                                                column=1,
+                                                                                                                pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='See Current Containers',
+           command=runningContainers).grid(row=2, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Start Container', command=start).grid(row=8, column=1,
+                                                                                                      pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Stop Container', command=stop).grid(row=9, column=1,
+                                                                                                    pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Get Container Logs', command=logcontainers).grid(row=10,
+                                                                                                                 column=1,
+                                                                                                                 pady=0)
 
     # Right Row
-    Button(win2, bg='#ca891d', activebackground='gray25', text='create containers', command=createcontainer).grid(row=1, column=3, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='destroy containers', command=remEntry).grid(row=2, column=3, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Get Container Stats', command=getresources).grid(row=8, column=3, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Start Remote Shell', command=reverseshell).grid(row=9, column=3, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Disconnect', command=disconnect).grid(row=10, column=3, pady=0) ##Both Buttons currently call disconnect due to the fact we can't recall our login screen
+    Button(win2, bg='#ca891d', activebackground='gray25', text='create containers', command=createcontainer).grid(row=1,
+                                                                                                                  column=3,
+                                                                                                                  pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='destroy containers', command=remEntry).grid(row=2,
+                                                                                                            column=3,
+                                                                                                            pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Get Container Stats', command=getresources).grid(row=8,
+                                                                                                                 column=3,
+                                                                                                                 pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Start Remote Shell', command=reverseshell).grid(row=9,
+                                                                                                                column=3,
+                                                                                                                pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Disconnect', command=disconnect).grid(row=10, column=3,
+                                                                                                      pady=0)  ##Both Buttons currently call disconnect due to the fact we can't recall our login screen
 
     # This is just an example for how to make a tooltip, the below code is now redundant and
     # should only be used for as a reference
@@ -434,7 +449,8 @@ def pinMenu():
     entryPIN = Entry(winpin, width=6, bg="gray25", fg='#ca891d')
     entryPIN.grid(row=12, column=8)
     Label(winpin, bg='black', fg='white', text='PIN (Optional):').grid(row=12, column=7)
-    Button(winpin, bg='#ca891d', activebackground='gray25', text='Enter', command=menu2Grab).grid(row=13, column=9, pady=0)
+    Button(winpin, bg='#ca891d', activebackground='gray25', text='Enter', command=menu2Grab).grid(row=13, column=9,
+                                                                                                  pady=0)
     Button(winpin, bg='#ca891d', activebackground='gray25', text='Exit', command=quit).grid(row=13, column=7, pady=0)
     winpin.bind('<Return>', lambda e, w=winpin: menu2Grab())
     winpin.mainloop()
@@ -449,21 +465,20 @@ def logMenu():
     winlog.resizable(True, True)
     winlog.configure(bg='#010204')
     # Loads an Image
-    #Logo = Image.open("B33Hive.png")
-    #photo = ImageTk.PhotoImage(Logo)
+    # Logo = Image.open("B33Hive.png")
+    # photo = ImageTk.PhotoImage(Logo)
     # This sets our icon
-    #winlog.wm_iconphoto(False, photo)
+    # winlog.wm_iconphoto(False, photo)
     # Labels
     Label(winlog, bg='black', fg='white', text='What Container Do You Want the Logs From?').grid(row=7, column=8)
     entryLog = Entry(winlog, width=6, bg="gray25", fg='#ca891d')
     entryLog.grid(row=12, column=8)
     Label(winlog, bg='black', fg='white', text='Container:').grid(row=12, column=7)
     # Buttons
-    Button(winlog, bg='#ca891d', activebackground='gray25', text='Enter', command=logMenuGrab).grid(row=13, column=9, pady=0)
+    Button(winlog, bg='#ca891d', activebackground='gray25', text='Enter', command=logMenuGrab).grid(row=13, column=9,
+                                                                                                    pady=0)
     Button(winlog, bg='#ca891d', activebackground='gray25', text='Exit', command=logquit).grid(row=13, column=7, pady=0)
     winlog.mainloop()
-
-
 
 
 win = Tk()
@@ -481,9 +496,9 @@ conLogo.image = photo
 
 conLogo.grid(row=5, column=8, sticky=W, pady=4)
 
-
 Label(win, bg='black', fg='white', text='A Dynamic Honeypot C2 Server and Client').grid(row=7, column=8)
-Label(win, bg='black', fg='white', text='').grid(row=8, column=8) ##Blank Labels are Spacers because Tkinter.grid is bad
+Label(win, bg='black', fg='white', text='').grid(row=8,
+                                                 column=8)  ##Blank Labels are Spacers because Tkinter.grid is bad
 # These are descriptors for the entry boxes
 Label(win, bg='black', fg='white', text='Server IP').grid(row=10, column=7)
 Label(win, bg='black', fg='white', text='Port').grid(row=11, column=7)
@@ -493,11 +508,11 @@ Label(win, bg='black', fg='white', text='Port').grid(row=11, column=7)
 # These are our entry boxes
 servIP = Entry(win, width=16, bg="gray25", fg='#ca891d')
 port = Entry(win, width=6, bg="gray25", fg='#ca891d')
-#entryPIN = Entry(win, width=6, bg="gray25", fg='#ca891d') ####REDUNDANT####
+# entryPIN = Entry(win, width=6, bg="gray25", fg='#ca891d') ####REDUNDANT####
 
 servIP.grid(row=10, column=8)
 port.grid(row=11, column=8)
-#entryPIN.grid(row=12, column=8) ####REDUNDANT####
+# entryPIN.grid(row=12, column=8) ####REDUNDANT####
 win.bind('<Return>', lambda e, w=win: menu1Grab())
 Button(win, bg='#ca891d', activebackground='gray25', text='Connect', command=menu1Grab).grid(row=13, column=9, pady=0)
 Button(win, bg='#ca891d', activebackground='gray25', text='Exit', command=win.quit).grid(row=13, column=7, pady=0)
@@ -507,14 +522,12 @@ Button(win, bg='#ca891d', activebackground='gray25', text='Local Host', command=
 
 mainloop()  # End of First Tkinter Window
 
-
 # ------------------------------------------------------ NETWORK -------------------------------------------------------
 # server's IP address
 # if the server is not on this machine,
 # put the private (network) IP address (e.g 192.168.1.2)
 SERVER_HOST = serverIP  # ("Enter IP Address or for Local Chats: 127.0.0.1: ")
 SERVER_PORT = rawPort  # server's port
-
 
 separator_token = "<SEP>"  # we will use this to separate the client name & message
 
@@ -539,7 +552,7 @@ while True:
         if SERVER_PIN != CLIENT_PIN and Attempts < 2:
             Attempts = Attempts + 1
             print(SERVER_PIN, CLIENT_PIN)
-            print("Incorrect PIN", totalAttempts-Attempts, "remaining...")
+            print("Incorrect PIN", totalAttempts - Attempts, "remaining...")
             pinMenu()
         elif SERVER_PIN == CLIENT_PIN:
             print("Correct PIN")
@@ -548,6 +561,5 @@ while True:
         else:
             print("Pin Attempts Exceed, Disconnecting")
             disconnect()
-
 
 s.close()
