@@ -154,19 +154,6 @@ def pullImages(): ## Further Example
                 break
         messagebox.showinfo("Pulled Images", "Images were successfully pulled / updated")
 
-def startEntry():
-    global startWin
-    global containerStart
-    startWin = Toplevel()
-    startWin.title("Enter container name")
-    startWin.resizable(True, True)
-    startWin.configure(bg='#010204')
-    containerStart = Entry(startWin, width=6, bg="gray25", fg='#ca891d')
-    containerStart.grid(row=12, column=8)
-    Label(startWin, bg='black', fg='white', text='Container name:').grid(row=12, column=7)
-    Button(startWin, bg='#ca891d', activebackground='gray25', text='Enter', command=start).grid(row=13, column=9, pady=0)
-    Button(startWin, bg='#ca891d', activebackground='gray25', text='Exit', command=startWin.quit).grid(row=13, column=7, pady=0)
-
 def remEntry():
     global remWin
     global containerrem
@@ -175,28 +162,18 @@ def remEntry():
     destroycontainer()
 
 
-
 def start(): ## Further Example
-    global startGrab
-    startGrab = containerStart.get()
-    startWin.destroy()
+    containerStart = simpledialog.askstring("Start Container", "Enter a Container ID to start it")
     signal_Send = "start"
-    startContainer_send = startGrab.encode()
+    startContainer_send = containerStart.encode()
     sigSent = signal_Send.encode()
     s.send(sigSent)
     time.sleep(1)
     s.send(startContainer_send)
 
 
-def stopEntry():
-    global stopWin
-    global containerStop
-    containerStop = simpledialog.askstring("Stop Container", "Enter a Container ID to stop it")
-    print(containerStop)
-    stop()
-
-
 def stop(): ## Further Example
+    containerStop = simpledialog.askstring("Stop Container", "Enter a Container ID to stop it")
     signal_Send = "stop"
     stopContainer_send = containerStop.encode()
     sigSent = signal_Send.encode()
@@ -335,8 +312,8 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
     Button(win2, bg='#ca891d', activebackground='gray25', text='See Current Containers', command=runningContainers).grid(row=2, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button3', ).grid(row=3, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='button4', ).grid(row=4, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Start Container', command=startEntry).grid(row=6, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Stop Container', command=stopEntry).grid(row=7, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Start Container', command=start).grid(row=6, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Stop Container', command=stop).grid(row=7, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='Get Container Logs', command=logcontainers).grid(row=8, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='Get Container Stats', command=getresources).grid(row=9, column=1, pady=0)
     exitButton = Button(win2, bg='#ca891d', activebackground='gray25', text='Exit', command=quit)  # This allows us to reference a button later
