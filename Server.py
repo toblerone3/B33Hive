@@ -10,6 +10,7 @@ import sys
 import rsa
 from pathlib import Path
 from cryptography.fernet import Fernet
+import pickle
 
 key = Fernet.generate_key()
 Fern = Fernet(key)
@@ -295,8 +296,13 @@ def listen_for_client(cs):
                 reverseshell()
             if msg == "Show Running Containers":
                 print("Getting Containers")
-                runningContainers = str(client.containers.list(all=True))
-                returnSig = Fern.encrypt(runningContainers.encode())
+                runningContainers = client.containers.list(all=True)
+                containersInfo = []
+                for container in runningContainers:
+                    container_id = container.id
+                    container_name = container.name
+                    containersInfo.append({"Name": str(container_name[:12]),"ID": str(container_id[:12])})
+                returnSig = Fern.encrypt(pickle.dumps(containersInfo))
                 client_socket.send(returnSig)
             if msg == "Disconnect":
                 print("Client Disconnecting")

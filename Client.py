@@ -12,6 +12,7 @@ from tkinter import simpledialog
 import rsa
 from PIL import ImageTk, Image
 from cryptography.fernet import Fernet
+import pickle
 
 key = Fernet.generate_key()
 Fern = Fernet(key)
@@ -265,10 +266,11 @@ def runningContainers(): ## Further Example
     s.send(sigSent)
     while True:
         currentcontainers = s.recv(2048)
-        enccontainers = currentcontainers.decode()
-        printcontainers = Fern.decrypt(enccontainers)
+        deenc_containers = Fern.decrypt(currentcontainers)
+        printcontainers = pickle.loads(deenc_containers)
         print("Current Containers:")
-        print(printcontainers)#[1:][:-1]
+        for i in printcontainers:
+            print(i)#[1:][:-1]
         if currentcontainers != '':
             break
 
