@@ -2,7 +2,7 @@
 
 ___
 
-![Screenshot](B33HiveCover.png)
+![Screenshot](DockHiveCover.png)
 
 ## Requirements:
 - Docker (Engine or Desktop)
