@@ -201,6 +201,27 @@ def start():  ## Further Example
         messagebox.showinfo("Success", response)
 
 
+def groupstart():  ## Further Example
+    containerStart = simpledialog.askstring("Start Container Group", "Enter a Container group number to start it")
+    signal_Send = "groupstart"
+    startContainer_send = containerStart.encode()
+    sigSent = signal_Send.encode()
+    s.send(sigSent)
+    time.sleep(1)
+    s.send(startContainer_send)
+    response = s.recv(1024).decode()
+    if response == 'Invalid Start Name':
+        messagebox.showinfo("Invalid ID", "Invalid Container group, Please ensure you're using the"
+                                          " Container group number (1,2,3...)")
+    else:
+        # This is hacky, but it works
+        response = response.replace(",", "")
+        response = response.replace("'", "")
+        response = response.replace(")", "")
+        response = response.replace("(", "")
+        print(response)
+        messagebox.showinfo("Success", response)
+
 def stop():  ## Further Example
     containerStop = simpledialog.askstring("Stop Container", "Enter a Container ID to stop it")
     signal_Send = "stop"
@@ -391,6 +412,9 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
     Button(win2, bg='#ca891d', activebackground='gray25', text='Stop Container', command=stop).grid(row=9, column=1,
                                                                                                     pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='Get Container Logs', command=logcontainers).grid(row=10,
+                                                                                                                 column=1,
+                                                                                                                 pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Start Container Group', command=groupstart).grid(row=11,
                                                                                                                  column=1,
                                                                                                                  pady=0)
 

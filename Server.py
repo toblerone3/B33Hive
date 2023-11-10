@@ -99,6 +99,29 @@ def start():
         cl_response = str(cl_response).encode()
         client_socket.send(cl_response)
 
+def groupstart():
+    containersInfo=[]
+    containerlist = client.containers.list(all)
+    for container in containerlist:
+        container_name = container.name
+        containersInfo.append(str(container_name))
+    print(containersInfo)
+    if containersInfo == [] or ("kippo-"+startgroup) not in containersInfo:
+        print("Invalid Start Name Received")
+        cl_response = 'Invalid Group Number'.encode()
+        client_socket.send(cl_response)
+    else:
+        startcontainer = client.containers.get("kippo-"+startgroup)
+        startcontainer.start()
+        startcontainer = client.containers.get("sql-kippo-"+startgroup)
+        startcontainer.start()
+        startcontainer = client.containers.get("graph-kippo-"+startgroup)
+        startcontainer.start()
+        print("Container group:", startgroup, "Launched Successfully!")
+        cl_response = ("Container group", startgroup, "Launched Successfully!")
+        cl_response = str(cl_response).encode()
+        client_socket.send(cl_response)
+
 
 def stop():
     client.containers.list(all=True)
@@ -128,8 +151,20 @@ def randomword(length): # user for human readable names, for naming containers. 
 def create():
 
     print("\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP\n")
+    containersInfo=[]
+    containerlist = client.containers.list(all)
+    for container in containerlist:
+        container_name = container.name
+        containersInfo.append(str(container_name))
+    print(containersInfo)
+    if containersInfo == []:
+        nextnum = 1
+    else:
+        prevname = containersInfo[2]
+        num = int(prevname[6:])
+        nextnum = num + 1
 
-    kipponame = "kippo-" + randomword(8)
+    kipponame = "kippo-" + (str(nextnum))
     sqlname = "sql-" + kipponame
     graphname = "graph-" + kipponame
 
@@ -139,8 +174,8 @@ def create():
     client.containers.create(name=sqlname, environment=["MYSQL_ROOT_PASSWORD=K[5UZ4ELSf;e)gX="], image='mysql')
     client.containers.create(name=graphname, links={sqlname: 'mysql'},image="dariusbakunas/kippo-graph")
 
-    created = "\nthe created containers are: " + kipponame + '' + sqlname + '' + graphname
-
+    created = ("The created containers are: ", kipponame, sqlname, graphname)
+    created = str(created)
     print(created)
     returnStr = created
     returnSig = returnStr.encode()
@@ -235,6 +270,7 @@ def listen_for_client(cs):
     global rem_name
     global cpu_send
     global mem_send
+    global startgroup
     """
     This function keep listening for a message from cs socket
     Whenever a message is received, Follows the IF Statement Chain
@@ -256,6 +292,10 @@ def listen_for_client(cs):
                 time.sleep(1)
                 start_name = client_socket.recv(1024).decode()
                 start()
+            if msg == "groupstart":
+                time.sleep(1)
+                startgroup = client_socket.recv(1024).decode()
+                groupstart()
             if msg == "stop":
                 time.sleep(1)
                 stop_name = client_socket.recv(1024).decode()
@@ -301,7 +341,7 @@ def listen_for_client(cs):
                 for container in runningContainers:
                     container_id = container.id
                     container_name = container.name
-                    containersInfo.append({"Name": str(container_name[:12]),"ID": str(container_id[:12])})
+                    containersInfo.append({"Name": str(container_name),"ID": str(container_id[:12])})
                 returnSig = Fern.encrypt(pickle.dumps(containersInfo))
                 client_socket.send(returnSig)
             if msg == "Disconnect":
