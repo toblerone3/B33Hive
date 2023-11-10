@@ -1,27 +1,35 @@
-# B33Hive
+# Docker Image for B33Hive
 
 ___
 
 ![Screenshot](B33HiveCover.png)
 
-A dynamic Honeypot c2 server and client, using docker and python 3.10.
----
+## Requirements:
+- Docker (Engine or Desktop)
+- (Windows Only) Some Form of XServer for Windows (This guide will use XMing, please carefully consider your requirements to decide which you should use)
 
-VSCode Setup Tutorial:  
-https://code.visualstudio.com/docs/sourcecontrol/github
+## Installation:
+Download the docker release from the releases section, and at the same time, download and install Xming Server and Xming Fonts (Or your XServer of choice)
 
-Pycharm Setup Tutorial:  
-https://www.jetbrains.com/help/pycharm/github.html
+Navigate to the Xming Installation Folder and open a CMD Prompt in that location
 
-Client testing can and should be done in Windows, Server Side should be tested on Linux
-Suitable Distros for Linux testing include:
-[Fedora](https://fedoraproject.org/), ([X](https://xubuntu.org/)/[K](https://kubuntu.org/))[Ubuntu](https://ubuntu.com/), [Debian](https://www.debian.org/)
-etc...
+### WARNING ###
+The following should not be done on sensitive networks, please ensure you make an exception for Xming instead of doing the following on any form of production machine as we are about to launch XMing without access control
+This is simply for demonstration and testing purposes
 
-Requires the Following Ports to be Open: \
-5003 - Main Client - Server functionality \
-5004 - Reverse Shell 
+Launch XMing using:
+```Xming.exe -ac```
 
-You can change these ports in Server.py and reverseshell/reserveServer.py and reverseshell/reserveClient.py
+## Building Docker:
+To build using the docker image provided, open a terminal in the location of the Dockerfile and type:
+``` docker build -t dockhive . ```
 
-[Trello Board](https://trello.com/b/VC0HLcnX/b33hive)
+This will add the image to Docker Desktop, however we need to set a few parameters first in order for us to get a visual output:
+
+In CMD Prompt again, type ```set DISPLAY=<YOUR_IPV4>:0.0```
+
+Finally run the container using:
+
+```docker run -it --rm -e DISPLAY=%DISPLAY% --network="host" --name <NAME> dockhive```
+
+Replace <NAME> with a name of your choosing (Non-Critical)
