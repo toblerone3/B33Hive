@@ -13,10 +13,14 @@ from tkinter import simpledialog
 import rsa
 from PIL import ImageTk, Image
 from cryptography.fernet import Fernet
+from tkterminal import Terminal
 import pickle
 
 key = Fernet.generate_key()
 Fern = Fernet(key)
+
+if os.path.exists('contemp.txt'):
+    os.remove('contemp.txt')
 
 whichOS = platform.system()
 print("Launching", whichOS, "B33Hive Client")  ##Just a debug, we need this logic later
@@ -80,6 +84,8 @@ def pinexchange():  ## Further Example
 
 
 def disconnect():
+    if os.path.exists('contemp.txt'):
+        os.remove('contemp.txt')
     print("Disconnecting...")
     signal_Send = "Disconnect"
     sigSent = signal_Send.encode()
@@ -89,6 +95,7 @@ def disconnect():
         quit()
     except Exception as e:
         quit()
+
 
 
 def localhost():
@@ -140,11 +147,17 @@ def logMenuGrab():
         strlogs = str(declogs)
         logwrap = '\n'.join(re.findall('.{1,128}', strlogs))
         f = open("%sContainerLogs.txt" % loggrab, "w")
+        fnameloc = str("%sContainerLogs.txt" % loggrab)
         f.write(logwrap)
         print(declogs[4:])  # DEBUG ONLY
         messagebox.showinfo("Success", "Wrote Container Logs to %sContainerLogs.txt" % loggrab)
     if os.path.exists('raw.txt'):
         os.remove('raw.txt')
+    if whichOS == 'Windows':
+        mainterminal.run_command('type %s' % fnameloc)
+    if whichOS == 'Linux':
+        mainterminal.run_command('cat %s' % fnameloc)
+
 
 
 def logquit():
@@ -286,17 +299,23 @@ def runningContainers():  ## Further Example
     signal_Send = "Show Running Containers"
     sigSent = signal_Send.encode()
     s.send(sigSent)
-    while True:
-        currentcontainers = s.recv(2048)
-        deenc_containers = Fern.decrypt(currentcontainers)
-        printcontainers = pickle.loads(deenc_containers)
-        msgbox_print = ""
-        for container in printcontainers:
-            msgbox_print += str(container) + "\n"
-        print(msgbox_print)
-        messagebox.showinfo("Current containers:", msgbox_print)
-        if currentcontainers != '':
-            break
+    with open('contemp.txt', 'w') as f:
+        while True:
+            currentcontainers = s.recv(2048)
+            deenc_containers = Fern.decrypt(currentcontainers)
+            printcontainers = pickle.loads(deenc_containers)
+            msgbox_print = ""
+            for container in printcontainers:
+                msgbox_print += str(container) + "\n"
+            print(msgbox_print)
+            f.write(msgbox_print)
+            messagebox.showinfo("Current containers:", msgbox_print)
+            if whichOS == 'Windows':
+                mainterminal.run_command('type contemp.txt')
+            if whichOS == 'Linux':
+                mainterminal.run_command('cat contemp.txt')
+            if currentcontainers != '':
+                break
 
 
 def getresources():
@@ -388,10 +407,11 @@ def on_closing():
 
 def mainMenu():  # This is our main menu, functionalized, so we can debug and call later
     global entryBox
+    global mainterminal
     win2 = Tk()
     win2.title("B33Hive: Main Menu")
     # win.geometry("640x480")
-    win2.resizable(True, True)
+    win2.resizable(False, False)
     win2.configure(bg='#010204')
     # Loads an Image
     Logo = Image.open("B33Hive.png")
@@ -401,41 +421,28 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
     imageLogo.image = photo
     win2.wm_iconphoto(False, photo)  # sets icon
 
-    imageLogo.grid(row=5, column=2, sticky=W, pady=4)
+    imageLogo.grid(row=3, column=2, pady=0)
 
     # Lists all our buttons DO NOT USE ROW 5 as this will break the logo formatting
     # Left Row
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Pull / Update Images', command=pullImages).grid(row=1,
-                                                                                                                column=1,
-                                                                                                                pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='See Current Containers',
-           command=runningContainers).grid(row=2, column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Start Container', command=start).grid(row=8, column=1,
-                                                                                                      pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Stop Container', command=stop).grid(row=9, column=1,
-                                                                                                    pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Get Container Logs', command=logcontainers).grid(row=10,
-                                                                                                                 column=1,
-                                                                                                                 pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Start Container Group', command=groupstart).grid(row=11,
-                                                                                                                 column=1,
-                                                                                                                 pady=0)
+
+    Button(win2, bg='#ca891d', activebackground='gray25', text='See Current Containers', command=runningContainers).grid(row=1, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Start Container', command=start).grid(row=2, column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Create Containers', command=createcontainer).grid(row=3, column=1, pady=0)
+
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Get Container Logs', command=logcontainers).grid(row=4,column=1, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Start Container Group', command=groupstart).grid(row=5, column=1, pady=0)
+
+    # Middle Row
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Pull / Update Images', command=pullImages).grid(row=5, column=2, pady=0)
+
 
     # Right Row
-    Button(win2, bg='#ca891d', activebackground='gray25', text='create containers', command=createcontainer).grid(row=1,
-                                                                                                                  column=3,
-                                                                                                                  pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='destroy containers', command=remEntry).grid(row=2,
-                                                                                                            column=3,
-                                                                                                            pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Get Container Stats', command=getresources).grid(row=8,
-                                                                                                                 column=3,
-                                                                                                                 pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Start Remote Shell', command=reverseshell).grid(row=9,
-                                                                                                                column=3,
-                                                                                                                pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Disconnect', command=disconnect).grid(row=10, column=3,
-                                                                                                      pady=0)  ##Both Buttons currently call disconnect due to the fact we can't recall our login screen
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Get Container Stats', command=getresources).grid(row=1, column=3, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Stop Container', command=stop).grid(row=2, column=3, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Destroy Containers', command=remEntry).grid(row=3, column=3, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Start Remote Shell', command=reverseshell).grid(row=4, column=3, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Disconnect', command=disconnect).grid(row=5, column=3,pady=0)  ##Both Buttons currently call disconnect due to the fact we can't recall our login screen
 
     # This is just an example for how to make a tooltip, the below code is now redundant and
     # should only be used for as a reference
@@ -446,13 +453,20 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
     # Here we tell tkinter to put exitbutton into the grid
     # exitButton.grid(row=10, column=1, pady=0)
 
-    entryBox = Entry(win2, width=32, bg="gray25", fg='#ca891d')
-    entryBox.grid(row=9, column=2)
+    #entryBox = Entry(win2, width=32, bg="gray25", fg='#ca891d')
+    #entryBox.grid(row=9, column=2)
     win2.bind('<Return>', lambda e, w=win2: entryboxGrab())
 
     win2.protocol("WM_DELETE_WINDOW", on_closing)
-    # This entry box is to send commands to the server,
-    # clientInput = entryBox.get() #This is how we'll grab from the entry box later
+
+    # Terminal
+    mainterminal = Terminal(win2, background='#010204', foreground='#ca891d', highlightcolor='#ca891d',
+                            highlightbackground='#ca891d', insertbackground='#ca891d', selectbackground='#ca891d',
+                            pady=0, padx=0, width=80, height=12)
+    mainterminal.basename = "B33Hive:"
+    mainterminal.shell = True
+    mainterminal.linebar = True
+    mainterminal.grid(row=12, column=2, pady=0)
 
     mainloop()
 
