@@ -1,3 +1,4 @@
+import os
 import platform
 import re
 import socket
@@ -142,6 +143,8 @@ def logMenuGrab():
         f.write(logwrap)
         print(declogs[4:])  # DEBUG ONLY
         messagebox.showinfo("Success", "Wrote Container Logs to %sContainerLogs.txt" % loggrab)
+    if os.path.exists('raw.txt'):
+        os.remove('raw.txt')
 
 
 def logquit():
