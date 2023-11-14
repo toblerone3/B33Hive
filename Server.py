@@ -356,10 +356,8 @@ def listen_for_client(cs):
             if msg == "Get Resources":
                 print("Getting Container Resource Usage")
                 rscname = cs.recv(1024).decode()
-                if rscname == "Cancel":
-                    listen_for_client()
-                    break
                 if rscname not in str(client.containers.list(all=True)):
+                    print("Invalid ID")
                     cl_response = "Invalid ID".encode()
                     client_socket.send(cl_response)
                 else:
@@ -375,7 +373,7 @@ def listen_for_client(cs):
                             cpu_send = ("CPU Usage Percentage: {:.2f}%".format(cpu_percentage))
                             print(cpu_send)
                         if memory_percentage is not None:
-                            mem_send = ("Memory Usage Percentage: {:.2f}%".format(memory_percentage))
+                            mem_send = ("{:.2f}%".format(memory_percentage))
                             print(mem_send)
                         resources = ('CPU Usage is: ', cpu_send, '\n Memory Usage is: ', mem_send)
                         resources = str(resources).encode()

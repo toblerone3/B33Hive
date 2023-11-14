@@ -159,7 +159,6 @@ def logMenuGrab():
         mainterminal.run_command('cat %s' % fnameloc)
 
 
-
 def logquit():
     signal_Send = "Cancel"
     sigSent = signal_Send.encode()
@@ -170,7 +169,7 @@ def logquit():
 # ------------------------------------------------------- DOCKER -------------------------------------------------------
 
 
-def pullImages():  ## Further Example
+def pullImages():
     hangwarning = messagebox.askyesnocancel("Confirmation", "This Menu will freeze while the server pulls"
                                                             " the images, are you sure you want to pull the images now?")
     print(hangwarning)
@@ -195,7 +194,7 @@ def remEntry():
     destroycontainer()
 
 
-def start():  ## Further Example
+def start():
     containerStart = simpledialog.askstring("Start Container", "Enter a Container ID to start it")
     signal_Send = "start"
     startContainer_send = containerStart.encode()
@@ -217,7 +216,7 @@ def start():  ## Further Example
         messagebox.showinfo("Success", response)
 
 
-def groupstart():  ## Further Example
+def groupstart():
     containerStart = simpledialog.askstring("Start Container Group", "Enter a Container group number to start it")
     signal_Send = "groupstart"
     startContainer_send = containerStart.encode()
@@ -237,6 +236,7 @@ def groupstart():  ## Further Example
         response = response.replace("(", "")
         print(response)
         messagebox.showinfo("Success", response)
+
 
 def stop():  ## Further Example
     containerStop = simpledialog.askstring("Stop Container", "Enter a Container ID to stop it")
@@ -319,22 +319,38 @@ def runningContainers():  ## Further Example
 
 
 def getresources():
-    signal_Send = "Get Resources"
-    sigSent = signal_Send.encode()
-    s.send(sigSent)
     containerask = simpledialog.askstring("Get Container Stats", "What Container do you want the Stats from? "
                                                                  "(shorthand ID)")
-    print(containerask)  # DEBUG
-    sigSent = containerask.encode()
-    s.send(sigSent)
-    resourceusage = s.recv(2048)
-    resourceusage = resourceusage.decode()
-    if resourceusage == 'Invalid ID':
-        messagebox.showinfo("Invalid ID", "Invalid Container ID, Please ensure you're using the"
-                                          " Containers Shorthand ID")
+    print(containerask)
+    if len(containerask) == 12:
+        signal_Send = "Get Resources"
+        sigSent = signal_Send.encode()
+        s.send(sigSent)
+        print(containerask)  # DEBUG
+        time.sleep(0.25)
+        sigSent = containerask.encode()
+        s.send(sigSent)
+        resourceusage = s.recv(2048)
+        resourceusage = resourceusage.decode()
+        if resourceusage == 'Invalid ID':
+            messagebox.showinfo("Invalid ID", "Invalid Container ID, Please ensure you're using the"                                          " Containers Shorthand ID")
+            mainterminal.run_command("echo Invalid ID")
+            print("Invalid ID")
+        else:
+            resourceusage = str(resourceusage)
+            resourceusage = resourceusage.replace(",", "")
+            resourceusage = resourceusage.replace("'", "")
+            resourceusage = resourceusage.replace("\\n","")
+            print(resourceusage)
+            messagebox.showinfo("Success", resourceusage)
+            mainterminal.run_command("echo %s" % resourceusage)
+    elif containerask is None:
+        mainterminal.run_command("echo Cancelling")
+        print("Cancelling")
     else:
-        print(resourceusage)
-        messagebox.showinfo("Success", resourceusage)
+        messagebox.showinfo("Invalid ID","Invalid Container ID, Please ensure you're using the"                                          " Containers Shorthand ID")
+        mainterminal.run_command("echo Invalid ID")
+        print("Invalid ID")
 
 
 def reverseshell():  # Launches our Reverse Shell
