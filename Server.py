@@ -363,22 +363,28 @@ def listen_for_client(cs):
                 else:
                     print(rscname)
                     print("Check 1")
-                    container = client.containers.get(rscname)
-                    for stat in container.stats(decode=True):
-                        cpu_percentage = get_cpu_percentage(stat)
-                        memory_percentage = get_memory_percentage(stat)
-                        cpu_send = ''
-                        mem_send = ''
-                        if cpu_percentage is not None:
-                            cpu_send = ("CPU Usage Percentage: {:.2f}%".format(cpu_percentage))
-                            print(cpu_send)
-                        if memory_percentage is not None:
-                            mem_send = ("{:.2f}%".format(memory_percentage))
-                            print(mem_send)
-                        resources = ('CPU Usage is: ', cpu_send, '\n Memory Usage is: ', mem_send)
-                        resources = str(resources).encode()
-                        client_socket.send(resources)
-                        break
+                    if rscname in str(client.containers.list()):
+                        print("Check 3")
+                        container = client.containers.get(rscname)
+                        for stat in container.stats(decode=True):
+                            cpu_percentage = get_cpu_percentage(stat)
+                            memory_percentage = get_memory_percentage(stat)
+                            cpu_send = ''
+                            mem_send = ''
+                            if cpu_percentage is not None:
+                                cpu_send = ("CPU Usage Percentage: {:.2f}%".format(cpu_percentage))
+                                print(cpu_send)
+                            if memory_percentage is not None:
+                                mem_send = ("{:.2f}%".format(memory_percentage))
+                                print(mem_send)
+                            resources = ('CPU Usage is: ', cpu_send, '\n Memory Usage is: ', mem_send)
+                            resources = str(resources).encode()
+                            client_socket.send(resources)
+                            break
+                    else:
+                        print("Container Not Running")
+                        cl_response = "Container is not Running".encode()
+                        client_socket.send(cl_response)
 
         except Exception as e:
             # client no longer connected
