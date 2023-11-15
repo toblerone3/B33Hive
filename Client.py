@@ -172,7 +172,6 @@ def logquit():
 def pullImages():
     hangwarning = messagebox.askyesnocancel("Confirmation", "This Menu will freeze while the server pulls"
                                                             " the images, are you sure you want to pull the images now?")
-    print(hangwarning)
     if hangwarning is True:
         signal_Send = "pullImages"  # We store what we want to send to the server here
         sigSent = signal_Send.encode()  # Then we encode it into bytes
@@ -196,24 +195,28 @@ def remEntry():
 
 def start():
     containerStart = simpledialog.askstring("Start Container", "Enter a Container ID to start it")
-    signal_Send = "start"
-    startContainer_send = containerStart.encode()
-    sigSent = signal_Send.encode()
-    s.send(sigSent)
-    time.sleep(1)
-    s.send(startContainer_send)
-    response = s.recv(1024).decode()
-    if response == 'Invalid Start Name':
-        messagebox.showinfo("Invalid ID", "Invalid Container ID, Please ensure you're using the"
-                                          " Containers Shorthand ID")
+
+    if containerStart == None:
+        print("Returning to Main")
     else:
-        # This is hacky, but it works
-        response = response.replace(",", "")
-        response = response.replace("'", "")
-        response = response.replace(")", "")
-        response = response.replace("(", "")
-        print(response)
-        messagebox.showinfo("Success", response)
+        signal_Send = "start"
+        startContainer_send = containerStart.encode()
+        sigSent = signal_Send.encode()
+        s.send(sigSent)
+        time.sleep(1)
+        s.send(startContainer_send)
+        response = s.recv(1024).decode()
+        if response == 'Invalid Start Name':
+            messagebox.showinfo("Invalid ID", "Invalid Container ID, Please ensure you're using the"
+                                              " Containers Shorthand ID")
+        else:
+            # This is hacky, but it works
+            response = response.replace(",", "")
+            response = response.replace("'", "")
+            response = response.replace(")", "")
+            response = response.replace("(", "")
+            print(response)
+            messagebox.showinfo("Success", response)
 
 
 def groupstart():
@@ -240,24 +243,27 @@ def groupstart():
 
 def stop():  ## Further Example
     containerStop = simpledialog.askstring("Stop Container", "Enter a Container ID to stop it")
-    signal_Send = "stop"
-    stopContainer_send = containerStop.encode()
-    sigSent = signal_Send.encode()
-    s.send(sigSent)
-    time.sleep(1)
-    s.send(stopContainer_send)
-    response = s.recv(1024).decode()
-    if response == 'Invalid Start Name':
-        messagebox.showinfo("Invalid ID", "Invalid Container ID, Please ensure you're using the"
-                                          " Containers Shorthand ID")
+    if containerStop == None:
+        print("Returning to Main")
     else:
-        # This is hacky, but it works
-        response = response.replace(",", "")
-        response = response.replace("'", "")
-        response = response.replace(")", "")
-        response = response.replace("(", "")
-        print(response)
-        messagebox.showinfo("Success", response)
+        signal_Send = "stop"
+        stopContainer_send = containerStop.encode()
+        sigSent = signal_Send.encode()
+        s.send(sigSent)
+        time.sleep(1)
+        s.send(stopContainer_send)
+        response = s.recv(1024).decode()
+        if response == 'Invalid Start Name':
+            messagebox.showinfo("Invalid ID", "Invalid Container ID, Please ensure you're using the"
+                                              " Containers Shorthand ID")
+        else:
+            # This is hacky, but it works
+            response = response.replace(",", "")
+            response = response.replace("'", "")
+            response = response.replace(")", "")
+            response = response.replace("(", "")
+            print(response)
+            messagebox.showinfo("Success", response)
 
 
 def createcontainer():
@@ -272,6 +278,7 @@ def createcontainer():
         createoutput = createoutput.replace(")", "")
         createoutput = createoutput.replace("(", "")
         print(createoutput)  # and print it
+        mainterminal.run_command('echo %s' % createoutput)
         if createoutput != '':  # this just checks to see if we got anything, once the server responds the loop breaks
             break
 
@@ -297,6 +304,7 @@ def destroycontainer():
         deleteoutput = deleteoutput.replace("(", "")
         print(deleteoutput)
         messagebox.showinfo("Success", deleteoutput)
+        mainterminal.run_command('echo %s' % deleteoutput)
 
 
 def runningContainers():  ## Further Example
@@ -313,7 +321,7 @@ def runningContainers():  ## Further Example
                 msgbox_print += str(container) + "\n"
             print(msgbox_print)
             f.write(msgbox_print)
-            messagebox.showinfo("Current containers:", msgbox_print)
+            #messagebox.showinfo("Current containers:", msgbox_print)
             if whichOS == 'Windows':
                 mainterminal.run_command('type contemp.txt')
             if whichOS == 'Linux':
@@ -452,7 +460,7 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
 
 
     # Middle Row
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Pull / Update Images', command=pullImages).grid(row=5, column=2, pady=0)
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Pull / Update Images', command=pullImages).grid(row=4, column=2, pady=0)
 
 
     # Right Row
@@ -460,7 +468,7 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
     Button(win2, bg='#ca891d', activebackground='gray25', text='Stop Container', command=stop).grid(row=2, column=3, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='Destroy Containers', command=remEntry).grid(row=3, column=3, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='Start Remote Shell', command=reverseshell).grid(row=4, column=3, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Disconnect', command=disconnect).grid(row=5, column=3,pady=0)  ##Both Buttons currently call disconnect due to the fact we can't recall our login screen
+    Button(win2, bg='#ca891d', activebackground='gray25', text='Disconnect', command=disconnect).grid(row=13, column=3,pady=0)  ##Both Buttons currently call disconnect due to the fact we can't recall our login screen
 
     # This is just an example for how to make a tooltip, the below code is now redundant and
     # should only be used for as a reference

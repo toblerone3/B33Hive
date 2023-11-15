@@ -168,7 +168,7 @@ def create():
     print("check 1")
     client.containers.create(name=kipponame, ports={'2222/tcp': 2222}, image="cowrie/cowrie")
     print("Check 2")
-    created = ("The created containers are: ", kipponame)
+    created = ("Created Container:", kipponame)
     created = str(created)
     print(created)
     returnStr = created
@@ -181,6 +181,12 @@ def destroy():
     if rem_name not in str(client.containers.list(all=True)):
         print("Invalid Container ID")
         cl_response = "Invalid Container ID".encode()
+        client_socket.send(cl_response)
+    isrunning = client.containers.list() # We reinit this as otherwise the check doesn't work
+    isrunning = str(isrunning)
+    if rem_name in isrunning: # This is hacky, but I made a deal with the devil for this to work
+        print("Container Still Running")
+        cl_response = "Container is still running, please stop the container before deleting".encode()
         client_socket.send(cl_response)
     else:
         print("Attempting to remove container:", rem_name)
