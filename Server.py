@@ -150,26 +150,24 @@ def randomword(length): # user for human readable names, for naming containers. 
 
 def create():
 
-    print("\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP\n")
-    containersInfo=[]
-    containerlist = client.containers.list(all)
-    for container in containerlist:
-        container_name = container.name
-        containersInfo.append(str(container_name))
-    print(containersInfo)
-    if containersInfo == []:
-        nextnum = 1
-    else:
-        prevname = containersInfo[2]
-        num = int(prevname[6:])
-        nextnum = num + 1
+    #print("\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP\n")
+    # containersInfo=[]
+    # containerlist = client.containers.list(all)
+    # for container in containerlist:
+    #     container_name = container.name
+    #     containersInfo.append(str(container_name))
+    # print(containersInfo)
+    # if containersInfo == []:
+    #     nextnum = 1
+    # else:
+    #     prevname = containersInfo[2]
+    #     num = int(prevname[7:])
+    #     nextnum = num + 1
 
-    kipponame = "kippo-" + (str(nextnum))
-    sqlname = "sql-" + kipponame
-    graphname = "graph-" + kipponame
-
-    client.containers.create(name=kipponame, environment=["links={sqlname: 'sql-kippo-1'}, KIPPO_DB_PASSWORD=K[5UZ4ELSf;e)gX=, KIPPO_SRV_NAME=Barry B's Workstation"], image="dariusbakunas/kippo")
-
+    kipponame = "Cowrie-" + (str(randomword(4)))
+    print("check 1")
+    client.containers.create(name=kipponame, ports={'2222/tcp': 2222}, image="cowrie/cowrie")
+    print("Check 2")
     created = ("The created containers are: ", kipponame)
     created = str(created)
     print(created)

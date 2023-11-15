@@ -267,6 +267,10 @@ def createcontainer():
     while True:
         createoutput = s.recv(2048)  # and wait for a message from the server
         createoutput = createoutput.decode()  # we then turn it back into a string
+        createoutput = createoutput.replace(",", "")
+        createoutput = createoutput.replace("'", "")
+        createoutput = createoutput.replace(")", "")
+        createoutput = createoutput.replace("(", "")
         print(createoutput)  # and print it
         if createoutput != '':  # this just checks to see if we got anything, once the server responds the loop breaks
             break
@@ -441,13 +445,11 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
 
     # Lists all our buttons DO NOT USE ROW 5 as this will break the logo formatting
     # Left Row
-
     Button(win2, bg='#ca891d', activebackground='gray25', text='See Current Containers', command=runningContainers).grid(row=1, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='Start Container', command=start).grid(row=2, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='Create Containers', command=createcontainer).grid(row=3, column=1, pady=0)
-
     Button(win2, bg='#ca891d', activebackground='gray25', text='Get Container Logs', command=logcontainers).grid(row=4,column=1, pady=0)
-    Button(win2, bg='#ca891d', activebackground='gray25', text='Start Container Group', command=groupstart).grid(row=5, column=1, pady=0)
+
 
     # Middle Row
     Button(win2, bg='#ca891d', activebackground='gray25', text='Pull / Update Images', command=pullImages).grid(row=5, column=2, pady=0)
