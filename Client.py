@@ -60,7 +60,7 @@ f_private.close()
 print("Keys Loaded")
 
 
-def pinexchange():  ## Further Example
+def pinexchange():  
     global SERVER_PIN
     global key
     global Fern
@@ -242,7 +242,7 @@ def groupstart():
         messagebox.showinfo("Success", response)
 
 
-def stop():  ## Further Example
+def stop(): 
     containerStop = simpledialog.askstring("Stop Container", "Enter a Container ID to stop it")
     if containerStop == None:
         print("Returning to Main")
@@ -292,9 +292,9 @@ def destroycontainer():
     s.send(sigSent)
     time.sleep(1)
     s.send(remContainer_send)
-    deleteoutput = s.recv(2048)  # and wait for a message from the server
-    deleteoutput = deleteoutput.decode()  # we then turn it back into a string
-    print(deleteoutput)  # and print it
+    deleteoutput = s.recv(2048)  
+    deleteoutput = deleteoutput.decode() 
+    print(deleteoutput)  
     if deleteoutput == 'Invalid Container ID':
         messagebox.showinfo("Invalid ID", "Invalid Container ID, Please ensure you're using the"
                                           " Containers Shorthand ID")
@@ -308,7 +308,7 @@ def destroycontainer():
         mainterminal.run_command('echo %s' % deleteoutput)
 
 
-def runningContainers():  ## Further Example
+def runningContainers():  
     signal_Send = "Show Running Containers"
     sigSent = signal_Send.encode()
     s.send(sigSent)
@@ -375,7 +375,6 @@ def reverseshell():  # Launches our Reverse Shell
         signal_Send = "Reverse Shell"
         sigSent = signal_Send.encode()
         s.send(sigSent)
-        # os.system("start cmd /k /reverseshell/reverseClient.py")
         subprocess.run(["python", "reverseshell/reverseServer.py"])
     elif userwarning is False:
         print("Reverting to Main Menu")
@@ -452,7 +451,7 @@ def mainMenu():  # This is our main menu, functionalized, so we can debug and ca
 
     imageLogo.grid(row=3, column=2, pady=0)
 
-    # Lists all our buttons DO NOT USE ROW 5 as this will break the logo formatting
+    # Lists all our buttons
     # Left Row
     Button(win2, bg='#ca891d', activebackground='gray25', text='See Current Containers', command=runningContainers).grid(row=1, column=1, pady=0)
     Button(win2, bg='#ca891d', activebackground='gray25', text='Start Container', command=start).grid(row=2, column=1, pady=0)
