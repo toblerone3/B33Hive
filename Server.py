@@ -168,13 +168,9 @@ def create():
     sqlname = "sql-" + kipponame
     graphname = "graph-" + kipponame
 
+    client.containers.create(name=kipponame, environment=["links={sqlname: 'sql-kippo-1'}, KIPPO_DB_PASSWORD=K[5UZ4ELSf;e)gX=, KIPPO_SRV_NAME=Barry B's Workstation"], image="dariusbakunas/kippo")
 
-    #environment=["links={sqlname: 'mysql'}, KIPPO_DB_PASSWORD=K[5UZ4ELSf;e)gX=, KIPPO_SRV_NAME=Barry B's Workstation"]
-    client.containers.create(name=kipponame, environment=["links={sqlname: 'mysql'}, KIPPO_DB_PASSWORD=K[5UZ4ELSf;e)gX=, KIPPO_SRV_NAME=Barry B's Workstation"], image="dariusbakunas/kippo")
-    client.containers.create(name=sqlname, environment=["MYSQL_ROOT_PASSWORD=K[5UZ4ELSf;e)gX="], image='mysql')
-    client.containers.create(name=graphname, links={sqlname: 'mysql'},image="dariusbakunas/kippo-graph")
-
-    created = ("The created containers are: ", kipponame, sqlname, graphname)
+    created = ("The created containers are: ", kipponame)
     created = str(created)
     print(created)
     returnStr = created
@@ -201,14 +197,8 @@ def destroy():
 def checkimage(client):
     while True:
         print("pulling images\n")
-        client.images.pull('dariusbakunas/kippo')  # medium interaction SSH honeypot
-        print("kippo pulled...")
-        client.images.pull('mysql')  # dependency for kippo - data storage
-        print("mySQL pulled...")
-        client.images.pull('dariusbakunas/kippo-graph')  # dependency for kippo - analysing kippo data
-        print("kippo-graph pulled...")
-        print("\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP")
-        to_send = ("Pulled Kippo, Kippo-Graph and mySQL successfully").encode()
+        client.images.pull('cowrie/cowrie')  # medium interaction SSH honeypot
+        to_send = "Pulled Cowrie Successfully".encode()
         client_socket.send(to_send)
         break
 
