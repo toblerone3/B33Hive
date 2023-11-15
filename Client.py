@@ -145,7 +145,8 @@ def logMenuGrab():
     else:
         declogs = Fern.decrypt(rawlogs)
         strlogs = str(declogs)
-        logwrap = strlogs.replace("+0000","\n")
+        logwrap = strlogs.replace("+0000", "\n")
+        logwrap = strlogs.replace("\\n", "\n")
         f = open("%sContainerLogs.txt" % loggrab, "w")
         fnameloc = str("%sContainerLogs.txt" % loggrab)
         f.write(logwrap)
