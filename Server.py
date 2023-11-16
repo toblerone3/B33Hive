@@ -16,15 +16,12 @@ key = Fernet.generate_key()
 Fern = Fernet(key)
 
 
-dockerDebug = input("Launch with Docker? [Y/N] (DEBUG, REMOVE BEFORE HAND IN):")
-while dockerDebug.lower() not in ('y', 'n'):
-    dockerDebug = input("Please Enter Only a Y or an N Character: ")
-if dockerDebug.lower() == 'n':
-    print("Alright, just don't forget, Dockers not gonna work")
-if dockerDebug.lower() == 'y':
-    client = docker.from_env()
+print("Launching B33HIVE Server...")
+print("\nConnecting to Docker...")
+client = docker.from_env()
 
-genKeys = input("Generate new RSA Keys? (Recommended after Installation)[Y/N]:")
+
+genKeys = input("\nGenerate new RSA Keys? (Recommended after Installation)[Y/N]:")
 while genKeys.lower() not in ('y', 'n'):
     genKeys = input("Please Enter Only a Y or an N Character: ")
 if genKeys.lower() == 'n':
@@ -62,16 +59,16 @@ IPAddr = socket.gethostbyname(hostname)
 SERVER_HOST = '127.0.0.1'  # IPAddr # IMPORTANT - BEFORE SUBMISSION, REPLACE '127.0.0.1' WITH IPAddr (as is commented, this is for development ONLY)
 SERVER_PORT = 5003  # port we want to use
 SERVER_PIN = '8888'
-Attempts = 0
-print("Current Server IP address: " + IPAddr)
+Attempts = 3
+print("\nCurrent Server IP address: " + IPAddr)
 PIN_ASK = input("Do you want to protect your Server with a PIN? [Y/N]: ")
 
 while PIN_ASK.lower() not in ('y', 'n'):
-    if Attempts >= 3:
+    if Attempts < 1:
         print("No Attempts Left, Quitting.")
         quit()
     PIN_ASK = input("Please Enter Only a Y or an N Character: ")
-    Attempts += 1
+    Attempts -= 1
     print(Attempts, "/ 3 Attempts Left")
 
 
@@ -81,7 +78,7 @@ if PIN_ASK.lower() == 'n':
 if PIN_ASK.lower() == 'y':
     SERVER_PIN = input("Enter a Four Digit Pin for your server: ")
 
-Attempts = 0
+Attempts = 3
 
 
 def start():
@@ -96,29 +93,6 @@ def start():
         container.start()
         print("Container", start_name, "Launched Successfully!")
         cl_response = ("Container", start_name, "Launched Successfully!")
-        cl_response = str(cl_response).encode()
-        client_socket.send(cl_response)
-
-def groupstart():
-    containersInfo=[]
-    containerlist = client.containers.list(all)
-    for container in containerlist:
-        container_name = container.name
-        containersInfo.append(str(container_name))
-    print(containersInfo)
-    if containersInfo == [] or ("kippo-"+startgroup) not in containersInfo:
-        print("Invalid Start Name Received")
-        cl_response = 'Invalid Group Number'.encode()
-        client_socket.send(cl_response)
-    else:
-        startcontainer = client.containers.get("kippo-"+startgroup)
-        startcontainer.start()
-        startcontainer = client.containers.get("sql-kippo-"+startgroup)
-        startcontainer.start()
-        startcontainer = client.containers.get("graph-kippo-"+startgroup)
-        startcontainer.start()
-        print("Container group:", startgroup, "Launched Successfully!")
-        cl_response = ("Container group", startgroup, "Launched Successfully!")
         cl_response = str(cl_response).encode()
         client_socket.send(cl_response)
 
@@ -149,21 +123,6 @@ def randomword(length): # user for human readable names, for naming containers. 
 
 
 def create():
-
-    #print("\nthe default password for created containers which aren't honeypots is K[5UZ4ELSf;e)gX= - change this ASAP\n")
-    # containersInfo=[]
-    # containerlist = client.containers.list(all)
-    # for container in containerlist:
-    #     container_name = container.name
-    #     containersInfo.append(str(container_name))
-    # print(containersInfo)
-    # if containersInfo == []:
-    #     nextnum = 1
-    # else:
-    #     prevname = containersInfo[2]
-    #     num = int(prevname[7:])
-    #     nextnum = num + 1
-
     kipponame = "Cowrie-" + (str(randomword(4)))
     print("check 1")
     client.containers.create(name=kipponame, ports={'2222/tcp': 2222}, image="cowrie/cowrie")
@@ -233,14 +192,14 @@ def get_memory_percentage(stats):
 
 
 while True:
-    if Attempts >= 3:
+    if Attempts < 1:
         print("No Attempts Left, Quitting.")
         quit()
     if len(SERVER_PIN) == 4 and SERVER_PIN.isdigit() is True:
         print("Your PIN:", SERVER_PIN, "is now set!")
         break
     if len(SERVER_PIN) != 4 or SERVER_PIN.isdigit() is False:
-        Attempts += 1
+        Attempts -= 1
         print(Attempts, "/ 3 Attempts Left")
         SERVER_PIN = input("Please enter a FOUR Digit Pin: ")
 
@@ -264,7 +223,6 @@ def listen_for_client(cs):
     global rem_name
     global cpu_send
     global mem_send
-    global startgroup
     """
     This function keep listening for a message from cs socket
     Whenever a message is received, Follows the IF Statement Chain
@@ -286,10 +244,6 @@ def listen_for_client(cs):
                 time.sleep(1)
                 start_name = client_socket.recv(1024).decode()
                 start()
-            if msg == "groupstart":
-                time.sleep(1)
-                startgroup = client_socket.recv(1024).decode()
-                groupstart()
             if msg == "stop":
                 time.sleep(1)
                 stop_name = client_socket.recv(1024).decode()

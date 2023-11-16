@@ -72,12 +72,10 @@ def pinexchange():
     s.send(public_key.save_pkcs1("PEM"))  # then we send it using s.send
     encPIN = s.recv(3096)
     decPIN = rsa.decrypt(encPIN, private_key).decode()
-    print(decPIN, '# DEBUG')
     SERVER_PIN = str(decPIN)
     key = s.recv(1024)
     key = rsa.decrypt(key, private_key).decode()
     Fern = Fernet(key)
-    print(Fern)
 
 
 # ---------------------------------------------- DISCONNECTIONS AND DEBUG ----------------------------------------------
@@ -102,13 +100,9 @@ def localhost():
     global serverIP
     global rawPort
     win.destroy()
+    pinMenu()
     serverIP = '127.0.0.1'
     rawPort = '5003'
-
-
-def debugMain():  # This is how we skip to the main menu for debug, does not connect to the server
-    win.destroy()
-    mainMenu()
 
 
 # --------------------------------------------------- LOG RETRIEVAL ----------------------------------------------------
@@ -218,28 +212,6 @@ def start():
             response = response.replace("(", "")
             print(response)
             messagebox.showinfo("Success", response)
-
-
-def groupstart():
-    containerStart = simpledialog.askstring("Start Container Group", "Enter a Container group number to start it")
-    signal_Send = "groupstart"
-    startContainer_send = containerStart.encode()
-    sigSent = signal_Send.encode()
-    s.send(sigSent)
-    time.sleep(1)
-    s.send(startContainer_send)
-    response = s.recv(1024).decode()
-    if response == 'Invalid Start Name':
-        messagebox.showinfo("Invalid ID", "Invalid Container group, Please ensure you're using the"
-                                          " Container group number (1,2,3...)")
-    else:
-        # This is hacky, but it works
-        response = response.replace(",", "")
-        response = response.replace("'", "")
-        response = response.replace(")", "")
-        response = response.replace("(", "")
-        print(response)
-        messagebox.showinfo("Success", response)
 
 
 def stop(): 
@@ -413,7 +385,6 @@ def menu1Grab():
 def menu2Grab():
     global CLIENT_PIN
     CLIENT_PIN = entryPIN.get()
-    print(CLIENT_PIN)
     winpin.destroy()
     # pinexchange()
 
@@ -584,7 +555,6 @@ port.grid(row=11, column=8)
 win.bind('<Return>', lambda e, w=win: menu1Grab())
 Button(win, bg='#ca891d', activebackground='gray25', text='Connect', command=menu1Grab).grid(row=13, column=9, pady=0)
 Button(win, bg='#ca891d', activebackground='gray25', text='Exit', command=win.quit).grid(row=13, column=7, pady=0)
-Button(win, bg='#ca891d', activebackground='gray25', text='Debug Main', command=debugMain).grid(row=1, column=9, pady=0)
 Button(win, bg='#ca891d', activebackground='gray25', text='Local Host', command=localhost).grid(row=1, column=7, pady=0)
 # added 'Debug Main' to load main menu without having to connect to the server, remove before hand in
 
@@ -619,7 +589,6 @@ while True:
     if SERVER_PIN != '8888':
         if SERVER_PIN != CLIENT_PIN and Attempts < 2:
             Attempts = Attempts + 1
-            print(SERVER_PIN, CLIENT_PIN)
             print("Incorrect PIN", totalAttempts - Attempts, "remaining...")
             pinMenu()
         elif SERVER_PIN == CLIENT_PIN:
