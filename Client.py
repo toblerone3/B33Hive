@@ -386,7 +386,7 @@ def menu2Grab():
     global CLIENT_PIN
     CLIENT_PIN = entryPIN.get()
     winpin.destroy()
-    # pinexchange()
+
 
 
 def entryboxGrab():
