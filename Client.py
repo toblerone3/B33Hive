@@ -1,6 +1,7 @@
 import os
 import platform
 import re
+import sys
 import socket
 import subprocess
 import time
@@ -93,11 +94,9 @@ def disconnect():
     try:
         s.send(sigSent)
         s.close()
-        quit()
-        exit()
+        sys.exit()
     except Exception as e:
-        quit()
-        exit()
+        sys.exit()
 
 
 def localhost():
