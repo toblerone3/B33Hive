@@ -16,6 +16,9 @@ from cryptography.fernet import Fernet
 from tkterminal import Terminal
 import pickle
 
+hostname = socket.gethostname()
+IPAddr = socket.gethostbyname(hostname)
+
 key = Fernet.generate_key()
 Fern = Fernet(key)
 
@@ -101,7 +104,7 @@ def localhost():
     global rawPort
     win.destroy()
     pinMenu()
-    serverIP = '127.0.0.1'
+    serverIP = IPAddr
     rawPort = '5003'
 
 
@@ -480,7 +483,7 @@ def pinMenu():
     Label(winpin, bg='black', fg='white', text='PIN (Optional):').grid(row=12, column=7)
     Button(winpin, bg='#ca891d', activebackground='gray25', text='Enter', command=menu2Grab).grid(row=13, column=9,
                                                                                                   pady=0)
-    Button(winpin, bg='#ca891d', activebackground='gray25', text='Exit', command=quit).grid(row=13, column=7, pady=0)
+    Button(winpin, bg='#ca891d', activebackground='gray25', text='Exit', command=disconnect).grid(row=13, column=7, pady=0)
     winpin.bind('<Return>', lambda e, w=winpin: menu2Grab())
     winpin.mainloop()
 
