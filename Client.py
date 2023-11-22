@@ -144,7 +144,6 @@ def logMenuGrab():
         f = open("%sContainerLogs.txt" % loggrab, "w")
         fnameloc = str("%sContainerLogs.txt" % loggrab)
         f.write(logwrap)
-        print(declogs[4:])  # DEBUG ONLY
         messagebox.showinfo("Success", "Wrote Container Logs to %sContainerLogs.txt" % loggrab)
     if os.path.exists('raw.txt'):
         os.remove('raw.txt')
@@ -265,8 +264,7 @@ def destroycontainer():
     time.sleep(1)
     s.send(remContainer_send)
     deleteoutput = s.recv(2048)  
-    deleteoutput = deleteoutput.decode() 
-    print(deleteoutput)  
+    deleteoutput = deleteoutput.decode()
     if deleteoutput == 'Invalid Container ID':
         messagebox.showinfo("Invalid ID", "Invalid Container ID, Please ensure you're using the"
                                           " Containers Shorthand ID")
@@ -275,7 +273,6 @@ def destroycontainer():
         deleteoutput = deleteoutput.replace("'", "")
         deleteoutput = deleteoutput.replace(")", "")
         deleteoutput = deleteoutput.replace("(", "")
-        print(deleteoutput)
         messagebox.showinfo("Success", deleteoutput)
         mainterminal.run_command('echo %s' % deleteoutput)
 
@@ -311,7 +308,6 @@ def getresources():
         signal_Send = "Get Resources"
         sigSent = signal_Send.encode()
         s.send(sigSent)
-        print(containerask)  # DEBUG
         time.sleep(0.25)
         sigSent = containerask.encode()
         s.send(sigSent)
@@ -326,7 +322,6 @@ def getresources():
             resourceusage = resourceusage.replace(",", "")
             resourceusage = resourceusage.replace("'", "")
             resourceusage = resourceusage.replace("\\n","")
-            print(resourceusage)
             messagebox.showinfo("Success", resourceusage)
             mainterminal.run_command("echo %s" % resourceusage)
     elif containerask is None:
@@ -365,8 +360,6 @@ def show_data():
     rawPort = port.get()
     CLIENT_PIN = entryPIN.get()
     print('Connecting to %s on port %s' % (servIP.get(), port.get()))
-    print(serverIP)
-    print(rawPort)
     win.destroy()
 
 
@@ -376,8 +369,6 @@ def menu1Grab():
     serverIP = servIP.get()
     rawPort = port.get()
     print('Connecting to %s on port %s' % (servIP.get(), port.get()))
-    print(serverIP)
-    print(rawPort)
     win.destroy()
     pinMenu()
 
@@ -392,7 +383,6 @@ def menu2Grab():
 def entryboxGrab():
     secretINPUT = entryBox.get()
     if secretINPUT == 'physics'.lower():
-        print('check 1')
         messagebox.showinfo("What do bees chew?", "Bumble gum!"
                                                   "\n(check the terminal)")
         subprocess.run(["python", "bee.py"])
