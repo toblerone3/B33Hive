@@ -94,9 +94,10 @@ def disconnect():
         s.send(sigSent)
         s.close()
         quit()
+        exit()
     except Exception as e:
         quit()
-
+        exit()
 
 
 def localhost():
