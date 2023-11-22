@@ -13,16 +13,16 @@ from cryptography.fernet import Fernet
 import pickle
 
 key = Fernet.generate_key()
-Fern = Fernet(key)
+Fern = Fernet(key)  # Inits Fernet as Fern
 
 
 print("Launching B33HIVE Server...")
 print("\nConnecting to Docker...")
-client = docker.from_env()
+client = docker.from_env()  # Initialises Docker as client
 
 
 genKeys = input("\nGenerate new RSA Keys? (Recommended after Installation)[Y/N]:")
-while genKeys.lower() not in ('y', 'n'):
+while genKeys.lower() not in ('y', 'n'):  # Simple yes no logic for generating new RSA keys, saves on load time
     genKeys = input("Please Enter Only a Y or an N Character: ")
 if genKeys.lower() == 'n':
     print("Continuing...")
@@ -49,14 +49,11 @@ f_private.close()
 
 print("Keys Loaded")
 
-# Line 21 commented out, replace lines 11-18 with this one liner before hand in, this is for ease of use
-# client = docker.from_env()  # detects the docker installation and assigns this to a variable
-
 hostname = socket.gethostname()
 IPAddr = socket.gethostbyname(hostname)
 
-# server's IP address
-SERVER_HOST = '127.0.0.1'  # IPAddr # IMPORTANT - BEFORE SUBMISSION, REPLACE '127.0.0.1' WITH IPAddr (as is commented, this is for development ONLY)
+# Server's IP address
+SERVER_HOST = IPAddr # Gets current IPv4 Address
 SERVER_PORT = 5003  # port we want to use
 SERVER_PIN = '8888'
 Attempts = 3
@@ -234,7 +231,6 @@ def listen_for_client(cs):
             print(msg)
             if msg == "Begin Key Exchange":
                 cpub = rsa.PublicKey.load_pkcs1(cs.recv(2048))
-                print(cpub)
                 encmsg = SERVER_PIN.encode('UTF-8')
                 client_socket.send(rsa.encrypt(encmsg, cpub))
                 time.sleep(0.5)
@@ -267,9 +263,7 @@ def listen_for_client(cs):
                     client_socket.send(endstream)
                 else:
                     print(logname)
-                    print("Check 1")
                     containerlogs = client.containers.get(logname)
-                    print("Check 2")
                     print(containerlogs.logs())
                     logstosend = str(containerlogs.logs())
                     print(logstosend)
@@ -310,9 +304,7 @@ def listen_for_client(cs):
                     client_socket.send(cl_response)
                 else:
                     print(rscname)
-                    print("Check 1")
                     if rscname in str(client.containers.list()):
-                        print("Check 3")
                         container = client.containers.get(rscname)
                         for stat in container.stats(decode=True):
                             cpu_percentage = get_cpu_percentage(stat)
@@ -354,13 +346,6 @@ while True:
     t.daemon = True
     # start the thread
     t.start()
-
-
-    #client_public = s.recv(2048)
-    #enc_PIN = rsa.encrypt(SERVER_PIN, client_public)
-
-
-# NSend the pin to the client - IMPORTANT, ENCRYPT THIS LATER
 
 # close client sockets
 for cs in client_sockets:
