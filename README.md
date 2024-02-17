@@ -4,7 +4,7 @@ ___
 
 ![Screenshot](B33HiveCover.png)
 
-A dynamic Honeypot c2 server and client, using docker and python 3.10.
+A Dynamic Honeypot C2 Server and Client - Made with Docker and Python 3.10.
 ---
 
 VSCode Setup Tutorial:  
